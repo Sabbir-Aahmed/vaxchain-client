@@ -23,10 +23,10 @@ const Navbar = () => {
           {/* Logo */}
           <div className="flex-shrink-0">
             <div className="flex items-center">
-              <div className="w-8 h-8 bg-cyan-600 rounded-lg flex items-center justify-center mr-3">
+              <div className="w-8 h-8 bg-teal-400 rounded-lg flex items-center justify-center mr-3">
                 <span className="text-white font-bold text-lg">V</span>
               </div>
-              <span className="text-xl font-bold text-cyan-600">VaxChain</span>
+              <span className="text-xl font-bold text-teal-400">VaxChain</span>
             </div>
           </div>
 
@@ -34,38 +34,19 @@ const Navbar = () => {
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-8">
               <ul className="flex items-baseline space-x-8">
-                <li>
-                  <a
-                    href="/"
-                    className="text-gray-700 hover:text-cyan-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50"
-                  >
+                <li className="text-teal-500 hover:text-cyan-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50">
                     Home
-                  </a>
                 </li>
-                <li>
-                  <a
-                    href="/about"
-                    className="text-gray-700 hover:text-cyan-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50"
-                  >
+                <li className="text-gray-700 hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50">
                     About Us
-                  </a>
                 </li>
-                <li>
-                  <a
-                    href="/doctors"
-                    className="text-gray-700 hover:text-cyan-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50"
-                  >
+                <li className="text-gray-700 hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50">
+                    Campaigns
+                </li>
+                <li className="text-gray-700 hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50">
                     Doctors
-                  </a>
                 </li>
-                <li>
-                  <a
-                    href="/campaign"
-                    className="text-gray-700 hover:text-cyan-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50"
-                  >
-                    Campaign
-                  </a>
-                </li>
+                
               </ul>
             </div>
           </div>
@@ -74,7 +55,7 @@ const Navbar = () => {
           <div className="hidden md:block relative">
             <button
               onClick={toggleProfile}
-              className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-cyan-600 hover:bg-gray-50 transition-colors duration-200"
+              className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-teal-400 hover:bg-gray-50 transition-colors duration-200"
             >
               <FaUser className="h-5 w-5 mr-1" />
               Profile
@@ -87,7 +68,7 @@ const Navbar = () => {
                 <div className="py-1">
                   <a
                     href="/profile"
-                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-cyan-600"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-teal-500"
                     onClick={() => setIsProfileOpen(false)}
                   >
                     <FaUser className="mr-3 h-4 w-4" />
@@ -95,7 +76,7 @@ const Navbar = () => {
                   </a>
                   <a
                     href="/dashboard"
-                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-cyan-600"
+                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-teal-500"
                     onClick={() => setIsProfileOpen(false)}
                   >
                     <MdDashboardCustomize className="mr-3 h-4 w-4" />
@@ -130,42 +111,31 @@ const Navbar = () => {
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200 bg-white">
               <ul className="space-y-1">
-                <li>
-                  <a
-                    href="/"
-                    className="text-gray-700 hover:text-cyan-600 hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
+                <li
+                  className="text-teal-500 hover:text-teal-400 hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
                     Home
-                  </a>
                 </li>
-                <li>
-                  <a
-                    href="/about"
-                    className="text-gray-700 hover:text-cyan-600 hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
+                <li
+                  className="text-gray-700 hover:text-teal-400 hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
                     About Us
-                  </a>
                 </li>
-                <li>
-                  <a
-                    href="/doctors"
-                    className="text-gray-700 hover:text-cyan-600 hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
+                <li
+                  className="text-gray-700 hover:text-cyan-400 hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                    Campaigns
+                </li>
+                <li
+                  className="text-gray-700 hover:text-cyan-400 hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
                     Doctors
-                  </a>
                 </li>
-                <li>
-                  <a
-                    href="/campaign"
-                    className="text-gray-700 hover:text-cyan-600 hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    Campaign
-                  </a>
-                </li>
+                
               </ul>
 
               {/* Mobile Profile Options */}
@@ -181,10 +151,10 @@ const Navbar = () => {
                 <div className="mt-3 space-y-1">
                   <a
                     href="/dashboard"
-                    className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-cyan-600 hover:bg-gray-50 transition-colors duration-200"
+                    className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-500 hover:bg-gray-50 transition-colors duration-200"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <FaTh className="mr-3 h-5 w-5" />
+                    <MdDashboardCustomize className="mr-3 h-5 w-5" />
                     Dashboard
                   </a>
                   <button
