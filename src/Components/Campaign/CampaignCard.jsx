@@ -39,12 +39,12 @@ const CampaignCard = ({ campaign }) => {
         </div>
       </div>
 
-      <div className="pb-3">
+      <div className="pb-3 ml-4">
         <h2 className="text-xl font-bold text-slate-800 line-clamp-2">{campaign.name}</h2>
         <p className="text-slate-600 line-clamp-2">{campaign.description}</p>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-3 ml-4">
         {/* Vaccine Type */}
         <div className="flex items-center gap-2 text-sm text-slate-700">
           <FaSyringe className="text-teal-500 w-4 h-4" />
@@ -76,7 +76,7 @@ const CampaignCard = ({ campaign }) => {
 
       <div className="pt-4">
         <button className="w-full bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white font-medium py-2 px-4 rounded-xl transition-all duration-200">
-          Book Vaccination
+          Book
         </button>
       </div>
     </div>

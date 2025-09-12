@@ -36,15 +36,19 @@ const Navbar = () => {
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-8">
               <ul className="flex items-baseline space-x-8">
-                <li className="text-teal-500 hover:text-teal-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50">
+                <Link to={'/'}>
+                  <li className="text-gray-700 hover:text-teal-500 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50">
                     Home
-                </li>
+                  </li>
+                </Link>
                 <li className="text-gray-700 hover:text-teal-500 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50">
                     About Us
                 </li>
-                <li className="text-gray-700 hover:text-teal-500 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50">
+                <Link to={'/campaigns'}>
+                  <li className="text-gray-700 hover:text-teal-500 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50">
                     Campaigns
-                </li>
+                  </li>
+                </Link>
                 <li className="text-gray-700 hover:text-teal-500 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50">
                     Doctors
                 </li>
