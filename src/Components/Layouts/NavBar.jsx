@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { FaUser, FaChevronDown, FaTh, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa"
 import { MdDashboardCustomize } from "react-icons/md"
+import { Link } from "react-router"
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -23,10 +24,10 @@ const Navbar = () => {
           {/* Logo */}
           <div className="flex-shrink-0">
             <div className="flex items-center">
-              <div className="w-8 h-8 bg-teal-400 rounded-lg flex items-center justify-center mr-3">
+              <div className="w-8 h-8 bg-teal-500 rounded-lg flex items-center justify-center mr-3">
                 <span className="text-white font-bold text-lg">V</span>
               </div>
-              <span className="text-xl font-bold text-teal-400">VaxChain</span>
+              <span className="text-xl font-bold text-teal-500">VaxChain</span>
             </div>
           </div>
 
@@ -34,16 +35,16 @@ const Navbar = () => {
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-8">
               <ul className="flex items-baseline space-x-8">
-                <li className="text-teal-500 hover:text-cyan-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50">
+                <li className="text-teal-500 hover:text-teal-400 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50">
                     Home
                 </li>
-                <li className="text-gray-700 hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50">
+                <li className="text-gray-700 hover:text-teal-500 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50">
                     About Us
                 </li>
-                <li className="text-gray-700 hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50">
+                <li className="text-gray-700 hover:text-teal-500 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50">
                     Campaigns
                 </li>
-                <li className="text-gray-700 hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50">
+                <li className="text-gray-700 hover:text-teal-500 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50">
                     Doctors
                 </li>
                 
@@ -61,6 +62,10 @@ const Navbar = () => {
               Profile
               <FaChevronDown className="h-4 w-4 ml-1" />
             </button>
+              <div className="flex gap-4">
+                <Link to={'login'}> <button className="btn bg-teal-500">Login</button></Link>
+                <Link to={'register'}> <button className="btn bg-teal-500">Register</button></Link>
+              </div>
 
             {/* Profile Dropdown Menu */}
             {isProfileOpen && (
