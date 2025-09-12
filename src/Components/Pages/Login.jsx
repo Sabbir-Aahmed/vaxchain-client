@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { FaLock, FaEye, FaEyeSlash, FaShieldAlt } from "react-icons/fa"
+import { FaLock, FaEye, FaEyeSlash, FaShieldAlt, FaSpinner } from "react-icons/fa"
 import useAuth from "../../Hooks/useAuth"
 import { Link } from "react-router"
 

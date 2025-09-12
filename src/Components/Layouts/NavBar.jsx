@@ -1,13 +1,14 @@
-"use client"
 
 import { useState } from "react"
 import { FaUser, FaChevronDown, FaTh, FaSignOutAlt, FaBars, FaTimes } from "react-icons/fa"
 import { MdDashboardCustomize } from "react-icons/md"
 import { Link } from "react-router"
+import useAuthContext from "../../Hooks/useAuthContext"
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const{user, logoutUser} = useAuthContext()
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
@@ -53,6 +54,7 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Profile Dropdown */}
+          {user ? (
           <div className="hidden md:block relative">
             <button
               onClick={toggleProfile}
@@ -62,10 +64,7 @@ const Navbar = () => {
               Profile
               <FaChevronDown className="h-4 w-4 ml-1" />
             </button>
-              <div className="flex gap-4">
-                <Link to={'login'}> <button className="btn bg-teal-500">Login</button></Link>
-                <Link to={'register'}> <button className="btn bg-teal-500">Register</button></Link>
-              </div>
+              
 
             {/* Profile Dropdown Menu */}
             {isProfileOpen && (
@@ -89,7 +88,7 @@ const Navbar = () => {
                   </a>
                   <button
                     className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
-                    onClick={() => setIsProfileOpen(false)}
+                    onClick={logoutUser}
                   >
                     <FaSignOutAlt className="mr-3 h-4 w-4" />
                     Logout
@@ -98,6 +97,14 @@ const Navbar = () => {
               </div>
             )}
           </div>
+          ) : (
+            <div className="flex gap-4">
+                <Link to={'login'}> <button className="btn bg-teal-500">Login</button></Link>
+                <Link to={'register'}> <button className="btn bg-teal-500">Register</button></Link>
+          </div>
+          )
+        }
+          
 
           {/* Mobile menu button - Toggler */}
           <div className="md:hidden">
@@ -144,16 +151,18 @@ const Navbar = () => {
               </ul>
 
               {/* Mobile Profile Options */}
+              { user ? (
               <div className="border-t border-gray-200 pt-4 pb-3">
-                <div className="flex items-center px-3">
-                  <div className="flex-shrink-0">
-                    <FaUser className="h-8 w-8 text-gray-400" />
-                  </div>
-                  <div className="ml-3">
-                    <div className="text-base font-medium text-gray-700">Profile</div>
-                  </div>
-                </div>
+                
                 <div className="mt-3 space-y-1">
+                  <a
+                    href="/dashboard"
+                    className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-500 hover:bg-gray-50 transition-colors duration-200"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <FaUser className="mr-3 h-5 w-5" />
+                    Profile
+                  </a>
                   <a
                     href="/dashboard"
                     className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-500 hover:bg-gray-50 transition-colors duration-200"
@@ -171,6 +180,13 @@ const Navbar = () => {
                   </button>
                 </div>
               </div>
+              ) : (
+                <div className="flex gap-4">
+                  <Link to={'login'}> <button className="btn bg-teal-500">Login</button></Link>
+                  <Link to={'register'}> <button className="btn bg-teal-500">Register</button></Link>
+                </div>
+              )
+            }
             </div>
           </div>
         )}

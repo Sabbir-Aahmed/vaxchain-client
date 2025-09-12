@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { useParams, useNavigate } from "react-router"
-import { FaLock, FaShieldAlt, FaCheckCircle, FaExclamationTriangle, FaEye, FaEyeSlash } from "react-icons/fa"
+import {FaSpinner, FaLock, FaShieldAlt, FaCheckCircle, FaExclamationTriangle, FaEye, FaEyeSlash } from "react-icons/fa"
 import useAuth from "../../Hooks/useAuth"
 
 const ResetPasswordPage = () => {
@@ -175,10 +175,10 @@ const ResetPasswordPage = () => {
               className="w-full bg-gradient-to-r from-teal-500 to-cyan-600 text-white py-3 px-4 rounded-lg font-medium hover:from-cyan-700 hover:to-teal-700 focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
               {isLoading ? (
-                <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  Updating Password...
-                </>
+                <div className="flex items-center justify-center ">
+                    <FaSpinner className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+                    Updating Password...
+                  </div>
               ) : (
                 <>
                   <FaLock className="mr-2" />
