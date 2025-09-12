@@ -73,7 +73,7 @@ export default function SignUpPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-100 via-teal-50 to-blue-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-8">
+      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl my-10 p-8">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
             <div className="w-12 h-12 bg-gradient-to-r from-teal-500 to-cyan-600 rounded-xl flex items-center justify-center">
@@ -336,6 +336,13 @@ export default function SignUpPage() {
               Already have an account?{" "}
               <a href="/login" className="text-teal-600 hover:text-teal-700 font-semibold">
                 Sign in here
+              </a>
+            </p>
+
+            <p className="text-slate-600">
+              Didn't receive activation mail?{" "}
+              <a href="/resend-activation" className="text-teal-600 hover:text-teal-700 font-semibold">
+                Resend activation mail
               </a>
             </p>
           </div>

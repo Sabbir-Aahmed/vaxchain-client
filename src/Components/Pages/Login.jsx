@@ -183,22 +183,27 @@ export default function LoginPage() {
                 )}
               </button>
 
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-slate-200"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white text-slate-500">New to VaxChain?</span>
+
+              <div className="text-center space-y-4">
+                <Link to="/register">
+                  <button
+                    type="button"
+                    className="text-teal-600 hover:text-teal-500 transition-colors font-medium"
+                  >
+                    Create an account
+                  </button>
+                </Link>
+
+                <div className="relative flex items-center justify-center">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-slate-200"></div>
+                  </div>
+                  <span className="relative px-4 bg-white text-slate-500 text-sm cursor-pointer">
+                    <Link to="/forgot-password">Forgot Password?</Link>
+                  </span>
                 </div>
               </div>
 
-              <div className="text-center">
-                <Link to={'/register'}>
-                    <button type="button" className="text-teal-600 hover:text-teal-500 transition-colors font-medium">
-                        Create an account
-                    </button>
-                </Link>
-              </div>
             </form>
           </div>
         </div>

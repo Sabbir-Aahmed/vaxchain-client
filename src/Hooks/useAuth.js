@@ -68,7 +68,7 @@ const useAuth = () => {
             return handleAPIError(error, "Registration Failed! Try Again")
         }
     }
-    
+
     // update user profile 
     const updateUserProfile = async(data) => {
         setErrorMsg("")
@@ -121,7 +121,6 @@ const useAuth = () => {
         }
     }
        
-
 
     //resend activation mail
     const resentActivation = async(userData) => {

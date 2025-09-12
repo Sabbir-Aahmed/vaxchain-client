@@ -5,6 +5,9 @@ import Home from '../Pages/Home';
 import Login from '../Pages/Login';
 import Register from '../Pages/Register';
 import ActivateAccount from '../Registration/ActivateAccount';
+import ForgotPassword from '../Registration/ForgotPassword';
+import ResetPassword from '../Registration/ResetPassword';
+import ResendActivation from '../Registration/ResendActivation';
 
 const AppRoute = () => {
     return (
@@ -15,6 +18,9 @@ const AppRoute = () => {
                     <Route path='login' element={<Login/>}/>
                     <Route path='register' element={<Register/>}/>
                     <Route path='activate/:uid/:token' element={<ActivateAccount/>}/>
+                    <Route path='forgot-password' element = {<ForgotPassword/>}/>
+                    <Route path='password/reset/confirm/:uid/:token' element = {<ResetPassword/>}/>
+                    <Route path="resend-activation" element={<ResendActivation/>} />
                 </Route>
                 
             </Routes>
