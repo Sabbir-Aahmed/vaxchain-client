@@ -1,10 +1,10 @@
-import React from 'react';
-import CampaignCard from '../Campaign/CampaignCard';
+
+import Campaigns from '../Campaign/Campaigns';
 
 const CampaignPage = () => {
     return (
         <div>
-            <CampaignCard/>
+            <Campaigns/>
         </div>
     );
 };

@@ -9,6 +9,7 @@ import ForgotPassword from '../Registration/ForgotPassword';
 import ResetPassword from '../Registration/ResetPassword';
 import ResendActivation from '../Registration/ResendActivation';
 import CampaignPage from '../Pages/CampaignPage';
+import CampaignDetailsPage from '../Pages/CampaignDetailsPage';
 
 const AppRoute = () => {
     return (
@@ -23,6 +24,7 @@ const AppRoute = () => {
                     <Route path='password/reset/confirm/:uid/:token' element = {<ResetPassword/>}/>
                     <Route path="resend-activation" element={<ResendActivation/>} />
                     <Route path="campaigns" element={<CampaignPage/>} />
+                    <Route path="campaigns/details/:id" element={<CampaignDetailsPage/>} />
                 </Route>
                 
             </Routes>

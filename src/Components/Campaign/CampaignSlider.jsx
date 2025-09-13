@@ -8,6 +8,7 @@ import "swiper/css/navigation"
 import { FaSpinner, FaExclamationTriangle } from "react-icons/fa"
 import CampaignCard from "./CampaignCard"
 import apiClient from "../../Services/apiClient"
+import { Link } from "react-router"
 
 
 const CampaignSlider = () => {
@@ -30,13 +31,12 @@ const CampaignSlider = () => {
         <div className="flex justify-between items-center mb-12">
           <div>
             <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-2">Vaccination Campaigns</h2>
-            <p className="text-slate-600 max-w-2xl">
-              Browse and book your vaccination appointments from our active campaigns
-            </p>
           </div>
-          <button className="bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200">
-            View All
-          </button>
+          <Link to={'/campaigns'}>
+            <button className="bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white px-6 py-3 rounded-xl font-medium transition-all duration-200">
+              View All
+            </button>
+          </Link>
         </div>
 
         {/* Loading spinner */}

@@ -1,5 +1,6 @@
 
 import { FaCalendarAlt, FaUsers, FaSyringe, FaMapMarkerAlt } from "react-icons/fa"
+import { Link } from "react-router"
 
 const CampaignCard = ({ campaign }) => {
   const formatDate = (dateString) => {
@@ -75,9 +76,11 @@ const CampaignCard = ({ campaign }) => {
       </div>
 
       <div className="pt-4">
-        <button className="w-full bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white font-medium py-2 px-4 rounded-xl transition-all duration-200">
-          Book
-        </button>
+        <Link to={`/campaigns/details/${campaign.id}`}>
+          <button className="w-full bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white font-medium py-2 px-4 rounded-xl transition-all duration-200">
+            Details
+          </button>
+        </Link>
       </div>
     </div>
   )
