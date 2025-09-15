@@ -1,6 +1,6 @@
 "use client"
 
-import { FaInfoCircle, FaMapMarkerAlt, FaUserMd, FaCheckCircle } from "react-icons/fa"
+import { FaInfoCircle, FaMapMarkerAlt, FaUserMd, FaCheckCircle, FaCrown, FaDollarSign } from "react-icons/fa"
 
 const CampaignDetailsInfo = ({ campaign }) => {
   const formatDateTime = (dateTimeString) => {
@@ -23,6 +23,32 @@ const CampaignDetailsInfo = ({ campaign }) => {
 
   return (
     <div className="space-y-6">
+      {campaign.is_premium && (
+        <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-2xl shadow-lg p-6">
+          <h2 className="text-2xl font-bold text-amber-800 mb-4 flex items-center gap-2">
+            <FaCrown className="text-amber-600" />
+            Premium Campaign Details
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h3 className="font-semibold text-amber-700 mb-2 flex items-center gap-2">
+                <FaDollarSign className="text-amber-600 w-4 h-4" />
+                Campaign Fee
+              </h3>
+              <p className="text-2xl font-bold text-amber-800">${campaign.premium_price || 0}</p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-amber-700 mb-2">Premium Benefits</h3>
+              <ul className="text-amber-700 text-sm space-y-1">
+                <li>• Priority booking</li>
+                <li>• Enhanced medical care</li>
+                <li>• Dedicated support</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Campaign Overview */}
       <div className="bg-white rounded-2xl shadow-lg p-6">
         <h2 className="text-2xl font-bold text-slate-800 mb-4 flex items-center gap-2">
