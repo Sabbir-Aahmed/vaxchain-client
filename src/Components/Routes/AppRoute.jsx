@@ -11,6 +11,7 @@ import ResendActivation from '../Registration/ResendActivation';
 import CampaignPage from '../Pages/CampaignPage';
 import CampaignDetailsPage from '../Pages/CampaignDetailsPage';
 import Payment from '../Payment/Payment';
+import DashboardPage from '../Pages/DashboardPage';
 
 const AppRoute = () => {
     return (
@@ -27,6 +28,7 @@ const AppRoute = () => {
                     <Route path="campaigns" element={<CampaignPage/>} />
                     <Route path="campaigns/details/:id" element={<CampaignDetailsPage/>} />
                     <Route path="payment" element={<Payment/>} />
+                    <Route path="dashboard/*" element={<DashboardPage/>} />
                 </Route>
                 
             </Routes>
