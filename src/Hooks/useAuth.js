@@ -6,7 +6,7 @@ import apiClient from "../Services/apiClient";
 const useAuth = () => {
     const [user,setUser] = useState(null)
     const [errorMsg, setErrorMsg] = useState("")
-
+    const [authLoading, setAuthLoading] = useState(true);
 
     const getToken = () => {
         const token = localStorage.getItem("authTokens")
@@ -15,9 +15,13 @@ const useAuth = () => {
 
     const [authTokens, setAuthTokens] = useState(getToken())
 
-    useEffect (() => {
-        if(authTokens)fetchUserProfile()
-    },[authTokens])
+    useEffect(() => {
+        if (authTokens) {
+            fetchUserProfile().finally(() => setAuthLoading(false));
+        } else {
+            setAuthLoading(false);
+        }
+    }, [authTokens]);
 
     const handleAPIError = (error,defaultMessage= "Something went wrong! Try Again") => {
         if(error.response && error.response.data){
@@ -141,7 +145,7 @@ const useAuth = () => {
         localStorage.removeItem("authTokens")
         window.location.href = "/login"
     }
-    return {user,errorMsg,loginUser, registerUser, logoutUser, updateUserProfile, changePassword, forgotPassword, resetPassword, resentActivation}
+    return {user,authLoading,errorMsg,loginUser, registerUser, logoutUser, updateUserProfile, changePassword, forgotPassword, resetPassword, resentActivation}
     
 }
 

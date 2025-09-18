@@ -2,12 +2,13 @@
 
 import { useState } from "react"
 import { FaLock, FaEye, FaEyeSlash, FaShieldAlt, FaSpinner } from "react-icons/fa"
-import useAuth from "../../Hooks/useAuth"
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
+import useAuth from "../../hooks/useAuth"
 
 
-export default function LoginPage() {
+const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false)
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -51,7 +52,7 @@ export default function LoginPage() {
 
       if (result.success) {
         console.log("Login successful!", user)
-        // You can add navigation logic here, e.g., router.push('/dashboard')
+        window.location.href = "/"
       }
     } catch (error) {
       console.error("Login error:", error)
@@ -211,3 +212,5 @@ export default function LoginPage() {
     </div>
   )
 }
+
+export default LoginPage

@@ -62,10 +62,10 @@ const CampaignDetails = () => {
             amount: campaign.premium_price,
           })
         );
-        navigate("/payment");
+        navigate("/dashboard/payment");
       } else {
         alert("Booking successful!");
-        navigate("/campaigns");
+        navigate("/dashboard/user");
       }
     } catch (err) {
       console.error(err.response?.data || err);

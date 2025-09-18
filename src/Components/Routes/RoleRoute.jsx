@@ -1,10 +1,11 @@
-
 import { Navigate } from "react-router";
 import useAuthContext from "../../Hooks/useAuthContext";
 
 
 const RoleRoute = ({ children, allowedRoles }) => {
-  const { user } = useAuthContext();
+  const { user, authLoading } = useAuthContext();
+
+  if (authLoading) return null;
 
   if (!user) return <Navigate to="/login" replace />;
 
