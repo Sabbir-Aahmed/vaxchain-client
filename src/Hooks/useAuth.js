@@ -139,7 +139,7 @@ const useAuth = () => {
         setAuthTokens(null)
         setUser(null)
         localStorage.removeItem("authTokens")
-        localStorage.removeItem("cartId")
+        window.location.href = "/login"
     }
     return {user,errorMsg,loginUser, registerUser, logoutUser, updateUserProfile, changePassword, forgotPassword, resetPassword, resentActivation}
     

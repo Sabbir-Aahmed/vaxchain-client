@@ -49,9 +49,6 @@ const Navbar = () => {
                     Campaigns
                   </li>
                 </Link>
-                <li className="text-gray-700 hover:text-teal-500 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-gray-50">
-                    Doctors
-                </li>
                 
               </ul>
             </div>
@@ -82,14 +79,15 @@ const Navbar = () => {
                     <FaUser className="mr-3 h-4 w-4" />
                     Profile
                   </a>
-                  <a
-                    href="/dashboard"
-                    className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-teal-500"
-                    onClick={() => setIsProfileOpen(false)}
-                  >
-                    <MdDashboardCustomize className="mr-3 h-4 w-4" />
-                    Dashboard
-                  </a>
+                  <Link to={user?.role === "PATIENT" ? "/dashboard/user" : "/dashboard"}>
+                    <a
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-teal-500"
+                      onClick={() => setIsProfileOpen(false)}
+                    >
+                      <MdDashboardCustomize className="mr-3 h-4 w-4" />
+                      Dashboard
+                    </a>
+                  </Link>
                   <button
                     className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                     onClick={logoutUser}
@@ -127,30 +125,28 @@ const Navbar = () => {
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200 bg-white">
               <ul className="space-y-1">
-                <li
+                <Link to={'/'}>
+                  <li
                   className="text-teal-500 hover:text-teal-400 hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                     Home
-                </li>
+                  </li>
+                </Link>
                 <li
                   className="text-gray-700 hover:text-teal-400 hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                     About Us
                 </li>
-                <li
+                <Link to={'/campaigns'}>
+                  <li
                   className="text-gray-700 hover:text-cyan-400 hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                     Campaigns
                 </li>
-                <li
-                  className="text-gray-700 hover:text-cyan-400 hover:bg-gray-50 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                    Doctors
-                </li>
+                </Link>
                 
               </ul>
 
@@ -159,14 +155,15 @@ const Navbar = () => {
               <div className="border-t border-gray-200 pt-4 pb-3">
                 
                 <div className="mt-3 space-y-1">
+                
                   <a
-                    href="/dashboard"
                     className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-500 hover:bg-gray-50 transition-colors duration-200"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <FaUser className="mr-3 h-5 w-5" />
                     Profile
                   </a>
+                  <Link to={user?.role === "PATIENT" ? "/dashboard/user" : "/dashboard"}>
                   <a
                     href="/dashboard"
                     className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-500 hover:bg-gray-50 transition-colors duration-200"
@@ -175,9 +172,10 @@ const Navbar = () => {
                     <MdDashboardCustomize className="mr-3 h-5 w-5" />
                     Dashboard
                   </a>
+                  </Link>
                   <button
                     className="flex items-center w-full px-3 py-2 rounded-md text-base font-medium text-red-600 hover:bg-red-50 transition-colors duration-200"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    onClick={logoutUser}
                   >
                     <FaSignOutAlt className="mr-3 h-5 w-5" />
                     Logout
