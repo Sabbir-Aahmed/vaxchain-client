@@ -2,7 +2,7 @@ import { Outlet, useLocation, useNavigate } from "react-router";
 import Sidebar from "../Dashboard/Sidebar";
 import { useState } from "react";
 import DashboardNavbar from "../Dashboard/DashboardNavbar";
-import useAuth from "../../hooks/useAuth";
+import useAuth from "../../Hooks/useAuth";
 
 const DashboardLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

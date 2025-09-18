@@ -19,6 +19,7 @@ import {
 import useAuth from "../../Hooks/useAuth"
 
 
+
 export default function SignUpPage() {
   const { registerUser, errorMsg } = useAuth()
 

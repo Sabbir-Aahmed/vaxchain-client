@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { FaUser, FaBars, FaTimes } from "react-icons/fa";
-import useAuth from "../../hooks/useAuth";
+import useAuth from "../../Hooks/useAuth"
+
 
 const DashboardNavbar = ({ toggleSidebar, isSidebarOpen }) => {
   const [currentTime, setCurrentTime] = useState(new Date());

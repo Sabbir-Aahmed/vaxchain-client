@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { FaLock, FaEye, FaEyeSlash, FaShieldAlt, FaSpinner } from "react-icons/fa"
 import { Link, useNavigate } from "react-router"
-import useAuth from "../../hooks/useAuth"
+import useAuth from "../../Hooks/useAuth"
 
 
 const LoginPage = () => {
