@@ -1,6 +1,5 @@
-
-import { FaCalendarAlt, FaUsers, FaSyringe, FaMapMarkerAlt } from "react-icons/fa"
-import { Link } from "react-router"
+import { FaCalendarAlt, FaUsers, FaSyringe, FaMapMarkerAlt, FaCrown } from "react-icons/fa";
+import { Link } from "react-router";
 
 const CampaignCard = ({ campaign }) => {
   const formatDate = (dateString) => {
@@ -8,24 +7,24 @@ const CampaignCard = ({ campaign }) => {
       year: "numeric",
       month: "short",
       day: "numeric",
-    })
-  }
+    });
+  };
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case "active":
-        return "bg-green-100 text-green-800"
+        return "bg-green-100 text-green-800";
       case "upcoming":
-        return "bg-blue-100 text-blue-800"
+        return "bg-blue-100 text-blue-800";
       case "completed":
-        return "bg-gray-100 text-gray-800"
+        return "bg-gray-100 text-gray-800";
       default:
-        return "bg-teal-100 text-teal-800"
+        return "bg-teal-100 text-teal-800";
     }
-  }
+  };
 
   return (
-    <div className="w-full max-w-sm mx-auto bg-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden group">
+    <div className="w-full max-w-sm mx-auto bg-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden group relative">
       {/* Campaign Image */}
       <div className="relative h-48 overflow-hidden">
         <img
@@ -33,6 +32,16 @@ const CampaignCard = ({ campaign }) => {
           alt={campaign.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
+
+        {/* Premium Badge */}
+        {campaign.is_premium && (
+          <div className="absolute top-4 left-4 px-2 py-1 rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900 flex items-center gap-1 text-sm font-semibold shadow-md">
+            <FaCrown className="w-4 h-4" />
+            Premium
+          </div>
+        )}
+
+        {/* Status Badge */}
         <div className="absolute top-4 right-4">
           <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(campaign.status)}`}>
             {campaign.status || "Active"}
@@ -75,7 +84,7 @@ const CampaignCard = ({ campaign }) => {
         )}
       </div>
 
-      <div className="pt-4">
+      <div className="pt-4 ml-4 mr-4 mb-4">
         <Link to={`/campaigns/details/${campaign.id}`}>
           <button className="w-full bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white font-medium py-2 px-4 rounded-xl transition-all duration-200">
             Details
@@ -83,7 +92,7 @@ const CampaignCard = ({ campaign }) => {
         </Link>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CampaignCard
+export default CampaignCard;
