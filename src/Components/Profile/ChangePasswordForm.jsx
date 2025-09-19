@@ -113,7 +113,7 @@ export default function ChangePasswordForm() {
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full flex justify-center items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-600 hover:bg-cyan-700 text-white rounded-lg font-medium transition-colors"
+                                className="w-full flex justify-center items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-600 hover:bg-gradient-to-l from-teal-600 to-cyan-700 text-white rounded-lg font-medium transition-colors"
                             >
                                 {loading && (
                                     <FaSpinner className="animate-spin h-4 w-4" />

@@ -11,6 +11,7 @@ import {
 import CampaignDetailsInfo from "./CampaignDetailsInfo";
 import CampaignSchedule from "./CampaignsScedule";
 import apiClient from "../../Services/apiClient";
+import CampaignReview from "./CampaignReviews";
 
 const CampaignDetails = () => {
   const { id } = useParams();
@@ -219,6 +220,7 @@ const CampaignDetails = () => {
             </div>
           </div>
         </div>
+        {campaign && <CampaignReview campaignId={campaign.id} />}
       </div>
     </div>
   );

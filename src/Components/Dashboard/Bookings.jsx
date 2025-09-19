@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { FaCalendarCheck, FaUser, FaClock, FaSpinner, FaSyringe, FaEllipsisH, FaCalendarAlt, FaInfoCircle } from "react-icons/fa"
 import apiClient from '../../Services/apiClient'
+import { Link } from 'react-router'
 
 const Bookings = () => {
   const [bookings, setBookings] = useState([])
@@ -374,6 +375,13 @@ const Bookings = () => {
                       )}
                       
                       <div className="flex space-x-2 pt-2">
+                        <Link to={'campaigns/details/:id'}>
+                          <button 
+                            className="flex-1 bg-gradient-to-r from-teal-500 to-cyan-600 text-white py-2 px-3 rounded-lg text-xs font-medium hover:bg-gradient-to-l from-teal-500 to-cyan-600 transition-colors">
+                            details
+                          </button>
+                        </Link>
+                        
                         <button 
                           onClick={() => handleCancelBooking(booking.id)}
                           className="flex-1 bg-red-500 text-white py-2 px-3 rounded-lg text-xs font-medium hover:bg-red-600 transition-colors">
