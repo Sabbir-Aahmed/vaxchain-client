@@ -1,5 +1,6 @@
 import { FaCalendarAlt, FaUserMd } from "react-icons/fa";
 import vaccinImg from "../../assets/vaccin2.jpg"
+import { Link } from "react-router";
 const HomeBanner = () => {
   return (
     <div className="relative bg-gradient-to-br from-cyan-100 via-teal-50 to-blue-100 min-h-[500px] overflow-hidden">
@@ -32,7 +33,7 @@ const HomeBanner = () => {
       <div className="container mx-auto px-6 py-16">
         <div className="flex flex-col lg:flex-row items-center justify-between">
           {/* Left Content */}
-          <div className="lg:w-1/2 mb-8 lg:mb-0">
+          <div className="lg:w-1/2 mb-8 lg:mb-0 text-center lg:text-left">
             <h1 className="text-4xl lg:text-5xl font-bold text-slate-800 mb-4 leading-tight">
               Building a Healthier Tomorrow
             </h1>
@@ -41,15 +42,12 @@ const HomeBanner = () => {
             </h2>
             
 
-            {/* Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button className="bg-slate-800 hover:bg-slate-700 text-white px-8 py-3 rounded-full font-medium transition-colors duration-200">
-                Get appointment
-              </button>
-              <button className="border-2 border-slate-300 hover:border-slate-400 text-slate-700 px-8 py-3 rounded-full font-medium transition-colors duration-200 bg-white/50">
-                Specialists
-              </button>
-            </div>
+            {/* Button */}
+              <Link to={'/campaigns'}>
+                <button className="bg-slate-800 hover:bg-slate-700 text-white px-8 py-3 rounded-full font-medium transition-colors duration-200">
+                  Get appointment
+                </button>
+              </Link>
           </div>
 
           {/* Right Content - Doctor Image */}

@@ -41,16 +41,17 @@ const Trust = () => {
           ))}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid md:grid-cols-2 justify-items-center gap-8">
           {testimonials.map((testimonial, index) => (
-            <div key={index} className="bg-white p-8 rounded-2xl shadow-lg">
-              <div className="flex items-center mb-4">
+            <div key={index} className="bg-white p-8 rounded-2xl shadow-lg text-center md:text-left">
+              <div className="flex justify-center md:justify-start items-center mb-4">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <FaStar key={i} className="text-yellow-400" size={20} />
                 ))}
               </div>
               <p className="text-slate-600 mb-6 text-pretty">{testimonial.text}</p>
-              <div className="flex items-center gap-4">
+              
+              <div className="flex flex-col md:flex-row items-center md:items-start gap-4 justify-center md:justify-start">
                 <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
                   <testimonial.icon className="text-teal-600" />
                 </div>
