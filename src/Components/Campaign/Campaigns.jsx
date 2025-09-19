@@ -7,7 +7,7 @@ const Campaigns = () => {
   const [campaigns, setCampaigns] = useState([])
   const [filteredCampaigns, setFilteredCampaigns] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedStatus, setSelectedStatus] = useState("all")
+  const [selectedStatus, setSelectedStatus] = useState("ALL")
   const [isLoading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
@@ -17,7 +17,7 @@ const Campaigns = () => {
     setLoading(true)
     const params = new URLSearchParams()
     if (searchTerm) params.append('search', searchTerm)
-    if (selectedStatus !== "all") params.append('status', selectedStatus)
+    if (selectedStatus !== "ALL") params.append('status', selectedStatus)
     params.append('page', currentPage)
 
     apiClient
@@ -26,7 +26,7 @@ const Campaigns = () => {
         const campaignData = res.data.results || res.data || []
         setCampaigns(campaignData)
         setFilteredCampaigns(campaignData)
-        setTotalCount(res.data.count || 0) // Extract total count for pagination
+        setTotalCount(res.data.count || 0)
       })
       .catch((err) => {
         setError(err.message)
@@ -37,8 +37,8 @@ const Campaigns = () => {
       .finally(() => setLoading(false))
   }, [searchTerm, selectedStatus, currentPage])
 
-  // Calculate total pages (assuming page_size from backend, e.g., 10)
-  const pageSize = 10 // Adjust based on your DefaultPagination setting
+
+  const pageSize = 10
   const totalPages = Math.ceil(totalCount / pageSize)
 
   return (
@@ -81,10 +81,10 @@ const Campaigns = () => {
                 onChange={(e) => setSelectedStatus(e.target.value)}
                 className="pl-10 pr-8 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none appearance-none bg-white min-w-[140px]"
               >
-                <option value="all">All Status</option>
-                <option value="active">Active</option>
-                <option value="upcoming">Upcoming</option>
-                <option value="completed">Completed</option>
+                <option value="ALL">All</option>
+                <option value="ACTIVE">Active</option>
+                <option value="UPCOMING">Upcoming</option>
+                <option value="COMPLETED">Completed</option>
               </select>
             </div>
           </div>
