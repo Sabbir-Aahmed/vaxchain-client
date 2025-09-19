@@ -104,7 +104,7 @@ const Footer = () => {
                 placeholder="Enter your email"
                 className="px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               />
-              <button className="bg-teal-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-teal-500 transition-colors">
+              <button className="bg-gradient-to-r from-teal-500 to-cyan-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-teal-500 transition-colors">
                 Subscribe
               </button>
             </div>
@@ -115,7 +115,7 @@ const Footer = () => {
         <div className="border-t border-border mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-teal-500 to-cyan-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">V</span>
               </div>
               <span className="text-lg font-semibold text-teal-600">VaxChain</span>

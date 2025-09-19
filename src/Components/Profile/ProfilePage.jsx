@@ -1,0 +1,403 @@
+import profilePlaceholder from "../../assets/profile.webp";
+
+import { useState, useEffect } from "react";
+import {
+  FaEnvelope,
+  FaPhone,
+  FaUser,
+  FaSpinner,
+  FaCog,
+} from "react-icons/fa";
+import useAuthContext from "../../Hooks/useAuthContext";
+import apiClient from "../../Services/apiClient";
+
+export default function ProfilePage() {
+  const { user, authLoading } = useAuthContext();
+  const [isEditing, setIsEditing] = useState(false);
+  const [activeTab, setActiveTab] = useState("personal");
+  const [profileData, setProfileData] = useState(null);
+  const [medicalData, setMedicalData] = useState(null);
+  const [loadingMedical, setLoadingMedical] = useState(true);
+  const [selectedFile, setSelectedFile] = useState(null);
+
+
+  useEffect(() => {
+    if (!user) return;
+    const fetchProfile = async () => {
+      try {
+        let res;
+        if (user.role === "PATIENT") {
+          res = await apiClient.get("/patient/profile/");
+        } else {
+          res = await apiClient.get("/doctor/profile/");
+        }
+        const profile = Array.isArray(res.data) ? res.data[0] : res.data;
+        setProfileData(profile.user);
+        setMedicalData(profile);
+      } catch (err) {
+        console.log("Profile fetch error:", err);
+      } finally {
+        setLoadingMedical(false);
+      }
+    };
+    fetchProfile();
+  }, [user]);
+
+  const handlePersonalChange = (field, value) => {
+    setProfileData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleMedicalChange = (field, value) => {
+    setMedicalData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleProfileImageChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
+
+  const uploadProfileImage = async () => {
+    if (!selectedFile || !profileData?.id) return;
+    const formData = new FormData();
+    formData.append("profile_image", selectedFile);
+    await apiClient.patch(`/auth/users/me/`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+   
+    const res =
+      user.role === "PATIENT"
+        ? await apiClient.get("/patient/profile/")
+        : await apiClient.get("/doctor/profile/");
+    const profile = Array.isArray(res.data) ? res.data[0] : res.data;
+    setProfileData(profile.user);
+    setMedicalData(profile);
+    setSelectedFile(null);
+  };
+
+  const handleSave = async () => {
+    try {
+      if (activeTab === "personal") {
+        await apiClient.patch(`/auth/users/me/`, {
+          first_name: profileData.first_name,
+          last_name: profileData.last_name,
+          contact_number: profileData.contact_number,
+          address: profileData.address,
+          nid: profileData.nid,
+        });
+      } else if (activeTab === "medical") {
+        if (user.role === "PATIENT") {
+          await apiClient.patch(`/patient/profile/${medicalData.id}/`, {
+            blood_type: medicalData.blood_type,
+            allergies: medicalData.allergies,
+            medical_conditions: medicalData.medical_conditions,
+          });
+        } else {
+          await apiClient.patch(`/doctor/profile/${medicalData.id}/`, {
+            specialization: medicalData.specialization,
+            license_number: medicalData.license_number,
+            hospital: medicalData.hospital,
+            bio: medicalData.bio,
+          });
+        }
+      }
+      setIsEditing(false);
+    } catch (err) {
+      console.log("Error saving:", err);
+    }
+  };
+
+  if (authLoading || !profileData) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <FaSpinner className="animate-spin text-4xl text-cyan-600" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-teal-500 to-cyan-600 border-b border-gray-200">
+        <div className="max-w-6xl mx-auto px-6 py-8 flex flex-col md:flex-row items-start md:items-center gap-6">
+          <div className="relative h-24 w-24 border-4 border-cyan-100 rounded-full overflow-hidden">
+            <img
+              src={
+                profileData?.profile_image
+                  ? `https://res.cloudinary.com/dg9kylqph/${profileData.profile_image}`
+                  : profilePlaceholder
+              }
+              alt="Profile"
+              className="h-full w-full object-cover"
+            />
+          </div>
+          <div className="flex-1">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <h1 className="text-3xl font-bold text-white">
+                  {profileData.first_name} {profileData.last_name}
+                </h1>
+                <p className="text-gray-100 mt-1">
+                  {user.role === "PATIENT" ? "Patient" : "Healthcare Provider"}
+                </p>
+                <div className="flex items-center gap-4 mt-3 text-sm text-gray-100">
+                  <div className="flex items-center gap-1">
+                    <FaEnvelope className="h-4 w-4" /> {profileData.email}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <FaPhone className="h-4 w-4" /> {profileData.contact_number}
+                  </div>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                {!isEditing ? (
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-600 hover:bg-gradient-to-l from-teal-500 to-cyan-600 text-white rounded-lg font-medium transition-colors"
+                  >
+                    <FaUser className="h-4 w-4" /> Edit Profile
+                  </button>
+                ) : (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleSave}
+                      className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors"
+                    >
+                      Save Changes
+                    </button>
+                    <button
+                      onClick={() => setIsEditing(false)}
+                      className="px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg font-medium transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+            {isEditing && (
+              <div className="mt-2">
+                <input type="file" onChange={handleProfileImageChange} />
+                {selectedFile && (
+                  <button
+                    onClick={uploadProfileImage}
+                    className="px-3 py-1 bg-teal-500 text-white rounded-md mt-1"
+                  >
+                    Upload New Picture
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="max-w-6xl mx-auto px-6 py-8">
+        <div className="space-y-6">
+          <div className="grid grid-cols-3 bg-gray-100 rounded-lg p-1">
+            {["personal", "medical", "settings"].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                  activeTab === tab
+                    ? "bg-gradient-to-r from-teal-500 to-cyan-600 text-white shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                {tab === "personal"
+                  ? "Personal Info"
+                  : tab === "medical"
+                  ? "Medical Info"
+                  : "Settings"}
+              </button>
+            ))}
+          </div>
+
+          {/* Personal Info */}
+          {activeTab === "personal" && (
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 space-y-4">
+              <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-900">
+                <FaUser className="h-5 w-5 text-cyan-600" /> Personal
+                Information
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                  ["First Name", "first_name"],
+                  ["Last Name", "last_name"],
+                ].map(([label, field]) => (
+                  <div key={field}>
+                    <label className="block text-sm font-medium text-gray-700">
+                      {label}
+                    </label>
+                    <input
+                      type="text"
+                      disabled={!isEditing}
+                      value={profileData?.[field] ?? ""}
+                      onChange={(e) =>
+                        handlePersonalChange(field, e.target.value)
+                      }
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md disabled:bg-gray-50 disabled:text-gray-500"
+                    />
+                  </div>
+                ))}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    disabled
+                    value={profileData?.email ?? ""}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md disabled:bg-gray-50 disabled:text-gray-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Contact Number
+                  </label>
+                  <input
+                    type="text"
+                    disabled={!isEditing}
+                    value={profileData?.contact_number ?? ""}
+                    onChange={(e) =>
+                      handlePersonalChange("contact_number", e.target.value)
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md disabled:bg-gray-50 disabled:text-gray-500"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    NID
+                  </label>
+                  <input
+                    type="text"
+                    disabled={!isEditing}
+                    value={profileData?.nid ?? ""}
+                    onChange={(e) => handlePersonalChange("nid", e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md disabled:bg-gray-50 disabled:text-gray-500"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Address
+                  </label>
+                  <textarea
+                    disabled={!isEditing}
+                    value={profileData?.address ?? ""}
+                    onChange={(e) =>
+                      handlePersonalChange("address", e.target.value)
+                    }
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md disabled:bg-gray-50 disabled:text-gray-500 resize-none"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Medical Info */}
+          {activeTab === "medical" && (
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+              {loadingMedical ? (
+                <div className="flex justify-center items-center h-40">
+                  <FaSpinner className="animate-spin text-4xl text-cyan-600" />
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {user.role === "PATIENT"
+                    ? ["blood_type", "allergies", "medical_conditions"].map(
+                        (field) => (
+                          <div key={field} className="space-y-2">
+                            <label className="block text-sm font-medium text-gray-700">
+                              {field.replace("_", " ").toUpperCase()}
+                            </label>
+                            {field === "blood_type" ? (
+                              <input
+                                type="text"
+                                value={medicalData?.[field] ?? ""}
+                                disabled={!isEditing}
+                                onChange={(e) =>
+                                  handleMedicalChange(field, e.target.value)
+                                }
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 disabled:bg-gray-50 disabled:text-gray-500"
+                              />
+                            ) : (
+                              <textarea
+                                value={medicalData?.[field] ?? ""}
+                                disabled={!isEditing}
+                                onChange={(e) =>
+                                  handleMedicalChange(field, e.target.value)
+                                }
+                                rows={3}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 disabled:bg-gray-50 disabled:text-gray-500 resize-none"
+                              />
+                            )}
+                          </div>
+                        )
+                      )
+                    : ["specialization", "license_number", "hospital", "bio"].map(
+                        (field) => (
+                          <div key={field} className="space-y-2">
+                            <label className="block text-sm font-medium text-gray-700">
+                              {field.replace("_", " ").toUpperCase()}
+                            </label>
+                            {field === "bio" ? (
+                              <textarea
+                                value={medicalData?.[field] ?? ""}
+                                disabled={!isEditing}
+                                onChange={(e) =>
+                                  handleMedicalChange(field, e.target.value)
+                                }
+                                rows={3}
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 disabled:bg-gray-50 disabled:text-gray-500 resize-none"
+                              />
+                            ) : (
+                              <input
+                                type="text"
+                                value={medicalData?.[field] ?? ""}
+                                disabled={!isEditing}
+                                onChange={(e) =>
+                                  handleMedicalChange(field, e.target.value)
+                                }
+                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 disabled:bg-gray-50 disabled:text-gray-500"
+                              />
+                            )}
+                          </div>
+                        )
+                      )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Settings */}
+          {activeTab === "settings" && (
+            <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+              <div className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-4">
+                <FaCog /> Settings
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                Manage your account and privacy settings.
+              </p>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-700">Change Password</span>
+                  <button className="px-3 py-1 border bg-gradient-to-r from-teal-500 to-cyan-600 hover:bg-gradient-to-l from-teal-600 to-cyan-700 rounded-md text-white text-md">
+                    Update
+                  </button>
+                </div>
+                
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -21,6 +21,7 @@ import UpdateCampaign from '../Dashboard/Campaign/UpdateCampaign';
 import DashboardCampaign from '../Dashboard/Campaign/DashboardCampaign';
 import CreateCampaigns from '../Dashboard/Campaign/CreateCampaigns';
 import RoleRoute from './RoleRoute';
+import ProfilePage from '../Profile/ProfilePage';
 
 const AppRoute = () => {
     return (
@@ -36,6 +37,7 @@ const AppRoute = () => {
                     <Route path="resend-activation" element={<ResendActivation/>} />
                     <Route path="campaigns" element={<CampaignPage/>} />
                     <Route path="campaigns/details/:id" element={<CampaignDetailsPage/>} />                        
+                    <Route path="profile" element={<ProfilePage/>} />                        
                     
                 </Route>
                 
