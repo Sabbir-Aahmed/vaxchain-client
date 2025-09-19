@@ -109,7 +109,7 @@ const Reviews = () => {
     return (
       <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
         <div className="text-center">
-          <FaSpinner className="w-8 h-8 text-purple-500 animate-spin mx-auto mb-4" />
+          <FaSpinner className="w-8 h-8 text-teal-500 animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading reviews...</p>
         </div>
       </div>
@@ -123,7 +123,7 @@ const Reviews = () => {
           <p className="text-red-500 mb-4">{error}</p>
           <button 
             onClick={fetchReviews}
-            className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors"
+            className="bg-teal-500 text-white px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors"
           >
             Try Again
           </button>
@@ -139,7 +139,7 @@ const Reviews = () => {
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-teal-500 to-cyan-600 rounded-xl flex items-center justify-center">
                 <FaStar className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -248,7 +248,7 @@ const Reviews = () => {
                 <div key={review.id} className="border-b border-gray-100 pb-6 last:border-b-0 last:pb-0">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                      <div className="w-10 h-10 bg-gradient-to-r from-teal-500 to-cyan-600 rounded-full flex items-center justify-center">
                         <FaUser className="w-4 h-4 text-white" />
                       </div>
                       <div>

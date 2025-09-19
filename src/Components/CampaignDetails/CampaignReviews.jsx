@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaStar, FaEdit, FaTrash, FaSpinner } from "react-icons/fa";
+import { FaStar, FaEdit, FaTrash, FaSpinner, FaUser } from "react-icons/fa";
 import apiClient from "../../Services/apiClient";
 
 const CampaignReview = ({ campaignId }) => {
@@ -150,7 +150,10 @@ const CampaignReview = ({ campaignId }) => {
                         >
                             <div>
                                 <div className="flex items-center gap-2 mb-1">
-                                    <span className="font-semibold">{rev.patient_name}</span>
+                                    <div className="w-10 h-10 bg-gradient-to-r from-teal-500 to-cyan-600 rounded-full flex items-center justify-center">
+                                        <FaUser className="w-4 h-4 text-white" />
+                                    </div>
+                                    <span className="font-semibold text">{rev.patient_name}</span>
                                     <span className="text-yellow-400 flex items-center gap-1">
                                         {Array.from({ length: rev.rating }).map((_, idx) => (
                                             <FaStar key={idx} />
