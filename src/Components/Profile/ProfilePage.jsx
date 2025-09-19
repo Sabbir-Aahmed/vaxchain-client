@@ -23,17 +23,22 @@ export default function ProfilePage() {
 
 
   useEffect(() => {
-    if (!user) return;
-    const fetchProfile = async () => {
+    const fetchUserProfile = async () => {
+      if (!user) return;
+  
       try {
-        let res;
-        if (user.role === "PATIENT") {
-          res = await apiClient.get("/patient/profile/");
+        const userRes = await apiClient.get("/auth/users/me/");
+        const currentUser = userRes.data;
+        setProfileData(currentUser);
+  
+        let profileRes;
+        if (currentUser.role === "PATIENT") {
+          profileRes = await apiClient.get("/patient/profile/");
         } else {
-          res = await apiClient.get("/doctor/profile/");
+          profileRes = await apiClient.get("/doctor/profile/");
         }
-        const profile = Array.isArray(res.data) ? res.data[0] : res.data;
-        setProfileData(profile.user);
+  
+        const profile = Array.isArray(profileRes.data) ? profileRes.data[0] : profileRes.data;
         setMedicalData(profile);
       } catch (err) {
         console.log("Profile fetch error:", err);
@@ -41,7 +46,8 @@ export default function ProfilePage() {
         setLoadingMedical(false);
       }
     };
-    fetchProfile();
+  
+    fetchUserProfile();
   }, [user]);
 
   const handlePersonalChange = (field, value) => {
@@ -82,6 +88,7 @@ export default function ProfilePage() {
 
   const handleSave = async () => {
     try {
+      // Save personal info
       if (activeTab === "personal") {
         await apiClient.patch(`/auth/users/me/`, {
           first_name: profileData.first_name,
@@ -90,25 +97,54 @@ export default function ProfilePage() {
           address: profileData.address,
           nid: profileData.nid,
         });
-      } else if (activeTab === "medical") {
+      }
+  
+      // Save or create medical info
+      else if (activeTab === "medical") {
         if (user.role === "PATIENT") {
-          await apiClient.patch(`/patient/profile/${medicalData.id}/`, {
-            blood_type: medicalData.blood_type,
-            allergies: medicalData.allergies,
-            medical_conditions: medicalData.medical_conditions,
-          });
-        } else {
-          await apiClient.patch(`/doctor/profile/${medicalData.id}/`, {
-            specialization: medicalData.specialization,
-            license_number: medicalData.license_number,
-            hospital: medicalData.hospital,
-            bio: medicalData.bio,
-          });
+          if (medicalData?.id) {
+            // Update existing patient profile
+            await apiClient.patch(`/patient/profile/${medicalData.id}/`, {
+              blood_type: medicalData.blood_type,
+              allergies: medicalData.allergies,
+              medical_conditions: medicalData.medical_conditions,
+            });
+          } else {
+            // Create new patient profile
+            const res = await apiClient.post(`/patient/profile/`, {
+              blood_type: medicalData.blood_type,
+              allergies: medicalData.allergies,
+              medical_conditions: medicalData.medical_conditions,
+            });
+            setMedicalData(res.data);
+          }
+        } else if (user.role === "DOCTOR") {
+          if (medicalData?.id) {
+            // Update existing doctor profile
+            await apiClient.patch(`/doctor/profile/${medicalData.id}/`, {
+              specialization: medicalData.specialization,
+              license_number: medicalData.license_number,
+              hospital: medicalData.hospital,
+              bio: medicalData.bio,
+            });
+          } else {
+            // Create new doctor profile
+            const res = await apiClient.post(`/doctor/profile/`, {
+              specialization: medicalData.specialization,
+              license_number: medicalData.license_number,
+              hospital: medicalData.hospital,
+              bio: medicalData.bio,
+            });
+            setMedicalData(res.data);
+          }
         }
       }
+  
       setIsEditing(false);
+      alert("Profile saved successfully!");
     } catch (err) {
-      console.log("Error saving:", err);
+      console.error("Error saving profile:", err);
+      alert("Failed to save profile.");
     }
   };
 
@@ -224,7 +260,7 @@ export default function ProfilePage() {
           {activeTab === "personal" && (
             <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 space-y-4">
               <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-900">
-                <FaUser className="h-5 w-5 text-cyan-600" /> Personal
+                <FaUser className="h-5 w-5 text-teal-600" /> Personal
                 Information
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -381,7 +417,7 @@ export default function ProfilePage() {
           {activeTab === "settings" && (
             <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
               <div className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-4">
-                <FaCog /> Settings
+                <FaCog className="text-teal-600"/> Settings
               </div>
               <p className="text-gray-600 text-sm mb-4">
                 Manage your account and privacy settings.

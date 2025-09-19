@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const apiClient = axios.create({
-  baseURL: "http://127.0.0.1:8000/api/v1",
+  baseURL: "https://vaxchain-theta.vercel.app/api/v1",
   headers: {
     "Content-Type": "application/json",
   },
@@ -27,7 +27,6 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid, clear storage and redirect to login
       localStorage.removeItem("authTokens")
       window.location.href = "/login"
     }
