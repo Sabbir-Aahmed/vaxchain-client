@@ -10,6 +10,7 @@ import {
 } from "react-icons/fa";
 import useAuthContext from "../../Hooks/useAuthContext";
 import apiClient from "../../Services/apiClient";
+import { Link } from "react-router";
 
 export default function ProfilePage() {
   const { user, authLoading } = useAuthContext();
@@ -388,9 +389,11 @@ export default function ProfilePage() {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-700">Change Password</span>
-                  <button className="px-3 py-1 border bg-gradient-to-r from-teal-500 to-cyan-600 hover:bg-gradient-to-l from-teal-600 to-cyan-700 rounded-md text-white text-md">
-                    Update
-                  </button>
+                  <Link to={'/profile/update-password'}>
+                    <button className="px-3 py-1 border bg-gradient-to-r from-teal-500 to-cyan-600 hover:bg-gradient-to-l from-teal-600 to-cyan-700 rounded-md text-white text-md">
+                      Update
+                    </button>
+                  </Link>
                 </div>
                 
               </div>

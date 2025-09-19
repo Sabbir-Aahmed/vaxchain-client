@@ -22,6 +22,7 @@ import DashboardCampaign from '../Dashboard/Campaign/DashboardCampaign';
 import CreateCampaigns from '../Dashboard/Campaign/CreateCampaigns';
 import RoleRoute from './RoleRoute';
 import ProfilePage from '../Profile/ProfilePage';
+import ChangePasswordForm from '../Profile/ChangePasswordForm';
 
 const AppRoute = () => {
     return (
@@ -38,6 +39,7 @@ const AppRoute = () => {
                     <Route path="campaigns" element={<CampaignPage/>} />
                     <Route path="campaigns/details/:id" element={<CampaignDetailsPage/>} />                        
                     <Route path="profile" element={<ProfilePage/>} />                        
+                    <Route path="/profile/update-password" element={<ChangePasswordForm/>} />                        
                     
                 </Route>
                 

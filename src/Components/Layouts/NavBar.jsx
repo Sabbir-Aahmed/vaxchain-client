@@ -24,12 +24,14 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <div className="flex items-center">
-              <div className="w-8 h-8 bg-teal-500 rounded-lg flex items-center justify-center mr-3">
-                <span className="text-white font-bold text-lg">V</span>
+            <Link to={'/'}>
+              <div className="flex items-center">
+                <div className="w-8 h-8 bg-gradient-to-r from-teal-500 to-cyan-600 rounded-lg flex items-center justify-center mr-3">
+                  <span className="text-white font-bold text-lg">V</span>
+                </div>
+                <span className="text-xl font-bold text-teal-500">VaxChain</span>
               </div>
-              <span className="text-xl font-bold text-teal-500">VaxChain</span>
-            </div>
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
@@ -101,8 +103,8 @@ const Navbar = () => {
           </div>
           ) : (
             <div className="flex gap-4">
-                <Link to={'login'}> <button className="btn bg-teal-500">Login</button></Link>
-                <Link to={'register'}> <button className="btn bg-teal-500">Register</button></Link>
+                <Link to={'login'}> <button className="btn bg-gradient-to-r from-teal-500 to-cyan-600 hover:bg-gradient-to-l from-teal-500 to-cyan-600">Login</button></Link>
+                <Link to={'register'}> <button className="btn bg-gradient-to-r from-teal-500 to-cyan-600 hover:bg-gradient-to-l from-teal-500 to-cyan-600">Register</button></Link>
           </div>
           )
         }
@@ -184,8 +186,8 @@ const Navbar = () => {
               </div>
               ) : (
                 <div className="flex gap-4">
-                  <Link to={'login'}> <button className="btn bg-teal-500">Login</button></Link>
-                  <Link to={'register'}> <button className="btn bg-teal-500">Register</button></Link>
+                  <Link to={'login'}> <button className="btn bg-gradient-to-r from-teal-500 to-cyan-600 hover:bg-gradient-to-l from-teal-500 to-cyan-600">Login</button></Link>
+                  <Link to={'register'}> <button className="btn bg-gradient-to-r from-teal-500 to-cyan-600 hover:bg-gradient-to-l from-teal-500 to-cyan-600">Register</button></Link>
                 </div>
               )
             }
