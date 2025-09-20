@@ -114,7 +114,7 @@ const Campaigns = () => {
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className="flex items-center gap-2 px-4 py-2 bg-teal-500 text-white rounded-xl disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-teal-600 transition-all duration-200"
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white rounded-xl disabled:bg-gray-300 disabled:cursor-not-allowed  transition-all duration-200"
                 >
                   <FaArrowLeft className="w-4 h-4" />
                   Previous
@@ -125,7 +125,7 @@ const Campaigns = () => {
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages || totalPages === 0}
-                  className="flex items-center gap-2 px-4 py-2 bg-teal-500 text-white rounded-xl disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-teal-600 transition-all duration-200"
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white rounded-xl disabled:bg-gray-300 disabled:cursor-not-allowed  transition-all duration-200"
                 >
                   Next
                   <FaArrowRight className="w-4 h-4" />
