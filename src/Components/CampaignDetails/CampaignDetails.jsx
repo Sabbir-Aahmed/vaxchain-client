@@ -70,7 +70,7 @@ const CampaignDetails = () => {
       }
     } catch (err) {
       console.error(err.response?.data || err);
-      alert( "Booking failed."));
+      alert( "Booking failed.");
     } finally {
       setIsBooking(false);
     }
