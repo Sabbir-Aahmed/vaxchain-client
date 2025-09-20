@@ -103,8 +103,8 @@ const Navbar = () => {
           </div>
           ) : (
             <div className="flex gap-4">
-                <Link to={'login'}> <button className="btn bg-gradient-to-r from-teal-500 to-cyan-600 hover:bg-gradient-to-l from-teal-500 to-cyan-600">Login</button></Link>
-                <Link to={'register'}> <button className="btn bg-gradient-to-r from-teal-500 to-cyan-600 hover:bg-gradient-to-l from-teal-500 to-cyan-600">Register</button></Link>
+                <Link to={'login'}> <button className="btn text-white bg-gradient-to-r from-teal-500 to-cyan-600 hover:bg-gradient-to-l from-teal-500 to-cyan-600">Login</button></Link>
+                <Link to={'register'}> <button className="btn text-white bg-gradient-to-r from-teal-500 to-cyan-600 hover:bg-gradient-to-l from-teal-500 to-cyan-600">Register</button></Link>
           </div>
           )
         }
@@ -186,8 +186,8 @@ const Navbar = () => {
               </div>
               ) : (
                 <div className="flex gap-4">
-                  <Link to={'login'}> <button className="btn  bg-gradient-to-r from-teal-500 to-cyan-600 hover:bg-gradient-to-l from-teal-500 to-cyan-600">Login</button></Link>
-                  <Link to={'register'}> <button className="btn bg-gradient-to-r from-teal-500 to-cyan-600 hover:bg-gradient-to-l from-teal-500 to-cyan-600">Register</button></Link>
+                  <Link to={'login'}> <button className="btn text-white bg-gradient-to-r from-teal-500 to-cyan-600 hover:bg-gradient-to-l from-teal-500 to-cyan-600">Login</button></Link>
+                  <Link to={'register'}> <button className="btn text-white bg-gradient-to-r from-teal-500 to-cyan-600 hover:bg-gradient-to-l from-teal-500 to-cyan-600">Register</button></Link>
                 </div>
               )
             }
