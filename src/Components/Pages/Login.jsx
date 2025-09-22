@@ -161,12 +161,14 @@ const LoginPage = () => {
                   </label>
                 </div>
 
-                <button
+                <Link to={'/forgot-password'}>
+                  <button
                   type="button"
                   className="text-sm text-teal-600 hover:text-teal-500 transition-colors font-medium"
-                >
-                  Forgot password?
-                </button>
+                  >
+                    Forgot password?
+                  </button>
+                </Link>
               </div>
 
               <button
@@ -195,14 +197,6 @@ const LoginPage = () => {
                   </button>
                 </Link>
 
-                <div className="relative flex items-center justify-center">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-slate-200"></div>
-                  </div>
-                  <span className="relative px-4 bg-white text-slate-500 text-sm cursor-pointer">
-                    <Link to="/forgot-password">Forgot Password?</Link>
-                  </span>
-                </div>
               </div>
 
             </form>

@@ -3,7 +3,7 @@ import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaFacebookF, FaTwitter, FaLinkedin
 const Footer = () => {
   return (
     <footer className="bg-card bg-teal-50 border-t border-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 container mx:auto px:4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Contact Information */}
           <div className="space-y-4">
@@ -102,7 +102,7 @@ const Footer = () => {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="px-3 py-2 border border-border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-transparent"
               />
               <button className="bg-gradient-to-r from-teal-500 to-cyan-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-teal-500 transition-colors">
                 Subscribe
@@ -133,7 +133,7 @@ const Footer = () => {
                   Cookie Policy
                 </a>
               </div>
-              <p className="text-muted-foreground text-sm">© 2024 VaxChain. All rights reserved.</p>
+              <p className="text-muted-foreground text-sm">© 2025 VaxChain. All rights reserved.</p>
             </div>
           </div>
         </div>
