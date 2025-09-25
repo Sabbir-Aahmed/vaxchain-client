@@ -159,6 +159,7 @@ const Navbar = () => {
                 <div className="mt-3 space-y-1">
                 
                   <a
+                    href="/profile"
                     className="flex items-center px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-teal-500 hover:bg-gray-50 transition-colors duration-200"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
