@@ -11,6 +11,7 @@ import {
 import useAuthContext from "../../Hooks/useAuthContext";
 import apiClient from "../../Services/apiClient";
 import { Link } from "react-router";
+import Swal from "sweetalert2";
 
 export default function ProfilePage() {
   const { user, authLoading } = useAuthContext();
@@ -20,7 +21,6 @@ export default function ProfilePage() {
   const [medicalData, setMedicalData] = useState(null);
   const [loadingMedical, setLoadingMedical] = useState(true);
   const [selectedFile, setSelectedFile] = useState(null);
-
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -50,6 +50,50 @@ export default function ProfilePage() {
     fetchUserProfile();
   }, [user]);
 
+  const showSuccessAlert = (message) => {
+    Swal.fire({
+      title: "Success!",
+      text: message,
+      icon: "success",
+      confirmButtonColor: "#14b8a6",
+      confirmButtonText: "OK",
+      timer: 3000,
+      timerProgressBar: true,
+    });
+  };
+
+  const showErrorAlert = (message) => {
+    Swal.fire({
+      title: "Error!",
+      text: message,
+      icon: "error",
+      confirmButtonColor: "#ef4444",
+      confirmButtonText: "Try Again",
+    });
+  };
+
+  const showImageUploadSuccess = () => {
+    Swal.fire({
+      title: "Image Updated!",
+      text: "Your profile picture has been updated successfully.",
+      icon: "success",
+      confirmButtonColor: "#14b8a6",
+      confirmButtonText: "OK",
+      timer: 2000,
+      timerProgressBar: true,
+    });
+  };
+
+  const showImageUploadError = () => {
+    Swal.fire({
+      title: "Upload Failed!",
+      text: "Failed to upload profile picture. Please try again.",
+      icon: "error",
+      confirmButtonColor: "#ef4444",
+      confirmButtonText: "OK",
+    });
+  };
+
   const handlePersonalChange = (field, value) => {
     setProfileData((prev) => ({
       ...prev,
@@ -70,20 +114,28 @@ export default function ProfilePage() {
 
   const uploadProfileImage = async () => {
     if (!selectedFile || !profileData?.id) return;
-    const formData = new FormData();
-    formData.append("profile_image", selectedFile);
-    await apiClient.patch(`/auth/users/me/`, formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-   
-    const res =
-      user.role === "PATIENT"
-        ? await apiClient.get("/patient/profile/")
-        : await apiClient.get("/doctor/profile/");
-    const profile = Array.isArray(res.data) ? res.data[0] : res.data;
-    setProfileData(profile.user);
-    setMedicalData(profile);
-    setSelectedFile(null);
+    
+    try {
+      const formData = new FormData();
+      formData.append("profile_image", selectedFile);
+      await apiClient.patch(`/auth/users/me/`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+     
+      const res =
+        user.role === "PATIENT"
+          ? await apiClient.get("/patient/profile/")
+          : await apiClient.get("/doctor/profile/");
+      const profile = Array.isArray(res.data) ? res.data[0] : res.data;
+      setProfileData(profile.user);
+      setMedicalData(profile);
+      setSelectedFile(null);
+      
+      showImageUploadSuccess();
+    } catch (err) {
+      console.error("Error uploading profile image:", err);
+      showImageUploadError();
+    }
   };
 
   const handleSave = async () => {
@@ -97,6 +149,7 @@ export default function ProfilePage() {
           address: profileData.address,
           nid: profileData.nid,
         });
+        showSuccessAlert("Personal information updated successfully!");
       }
   
       // Save or create medical info
@@ -118,6 +171,7 @@ export default function ProfilePage() {
             });
             setMedicalData(res.data);
           }
+          showSuccessAlert("Medical information updated successfully!");
         } else if (user.role === "DOCTOR") {
           if (medicalData?.id) {
             // Update existing doctor profile
@@ -137,15 +191,49 @@ export default function ProfilePage() {
             });
             setMedicalData(res.data);
           }
+          showSuccessAlert("Professional information updated successfully!");
         }
       }
   
       setIsEditing(false);
-      alert("Profile saved successfully!");
     } catch (err) {
       console.error("Error saving profile:", err);
-      alert("Failed to save profile.");
+      
+      let errorMessage = "Failed to save profile. Please try again.";
+      if (err.response?.data) {
+        if (typeof err.response.data === 'string') {
+          errorMessage = err.response.data;
+        } else if (err.response.data.message) {
+          errorMessage = err.response.data.message;
+        } else if (err.response.data.detail) {
+          errorMessage = err.response.data.detail;
+        } else if (typeof err.response.data === 'object') {
+          errorMessage = Object.values(err.response.data).flat().join(', ');
+        }
+      }
+      
+      showErrorAlert(errorMessage);
     }
+  };
+
+  const handleCancelEdit = () => {
+    Swal.fire({
+      title: "Discard Changes?",
+      text: "Are you sure you want to cancel? All unsaved changes will be lost.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, Discard",
+      cancelButtonText: "Continue Editing",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setIsEditing(false);
+        // Reload the data to reset any changes
+        window.location.reload();
+      }
+    });
   };
 
   if (authLoading || !profileData) {
@@ -207,7 +295,7 @@ export default function ProfilePage() {
                       Save Changes
                     </button>
                     <button
-                      onClick={() => setIsEditing(false)}
+                      onClick={handleCancelEdit}
                       className="px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg font-medium transition-colors"
                     >
                       Cancel
@@ -218,11 +306,16 @@ export default function ProfilePage() {
             </div>
             {isEditing && (
               <div className="mt-2">
-                <input type="file" onChange={handleProfileImageChange} />
+                <input 
+                  type="file" 
+                  onChange={handleProfileImageChange} 
+                  className="text-white"
+                  accept="image/*"
+                />
                 {selectedFile && (
                   <button
                     onClick={uploadProfileImage}
-                    className="px-3 py-1 bg-teal-500 text-white rounded-md mt-1"
+                    className="px-3 py-1 bg-teal-500 text-white rounded-md mt-1 hover:bg-teal-600 transition-colors"
                   >
                     Upload New Picture
                   </button>
@@ -250,7 +343,7 @@ export default function ProfilePage() {
                 {tab === "personal"
                   ? "Personal Info"
                   : tab === "medical"
-                  ? "Medical Info"
+                  ? user.role === "PATIENT" ? "Medical Info" : "Professional Info"
                   : "Settings"}
               </button>
             ))}
@@ -279,7 +372,7 @@ export default function ProfilePage() {
                       onChange={(e) =>
                         handlePersonalChange(field, e.target.value)
                       }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md disabled:bg-gray-50 disabled:text-gray-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md disabled:bg-gray-50 disabled:text-gray-500 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     />
                   </div>
                 ))}
@@ -305,7 +398,7 @@ export default function ProfilePage() {
                     onChange={(e) =>
                       handlePersonalChange("contact_number", e.target.value)
                     }
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md disabled:bg-gray-50 disabled:text-gray-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md disabled:bg-gray-50 disabled:text-gray-500 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   />
                 </div>
                 <div className="sm:col-span-2">
@@ -317,7 +410,7 @@ export default function ProfilePage() {
                     disabled={!isEditing}
                     value={profileData?.nid ?? ""}
                     onChange={(e) => handlePersonalChange("nid", e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md disabled:bg-gray-50 disabled:text-gray-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md disabled:bg-gray-50 disabled:text-gray-500 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   />
                 </div>
                 <div className="sm:col-span-2">
@@ -331,14 +424,14 @@ export default function ProfilePage() {
                       handlePersonalChange("address", e.target.value)
                     }
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md disabled:bg-gray-50 disabled:text-gray-500 resize-none"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md disabled:bg-gray-50 disabled:text-gray-500 focus:ring-2 focus:ring-teal-500 focus:border-transparent resize-none"
                   />
                 </div>
               </div>
             </div>
           )}
 
-          {/* Medical Info */}
+          {/* Medical/Professional Info */}
           {activeTab === "medical" && (
             <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
               {loadingMedical ? (
@@ -347,12 +440,16 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <div className="space-y-4">
+                  <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-4">
+                    <FaUser className="h-5 w-5 text-teal-600" />
+                    {user.role === "PATIENT" ? "Medical Information" : "Professional Information"}
+                  </h3>
                   {user.role === "PATIENT"
                     ? ["blood_type", "allergies", "medical_conditions"].map(
                         (field) => (
                           <div key={field} className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-700">
-                              {field.replace("_", " ").toUpperCase()}
+                            <label className="block text-sm font-medium text-gray-700 capitalize">
+                              {field.replace("_", " ")}
                             </label>
                             {field === "blood_type" ? (
                               <input
@@ -381,8 +478,8 @@ export default function ProfilePage() {
                     : ["specialization", "license_number", "hospital", "bio"].map(
                         (field) => (
                           <div key={field} className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-700">
-                              {field.replace("_", " ").toUpperCase()}
+                            <label className="block text-sm font-medium text-gray-700 capitalize">
+                              {field.replace("_", " ")}
                             </label>
                             {field === "bio" ? (
                               <textarea
