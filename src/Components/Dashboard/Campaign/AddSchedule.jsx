@@ -6,10 +6,11 @@ import {
   FaTrash,
   FaSave,
   FaArrowLeft,
-  FaSpinner
+  FaSpinner,
 } from "react-icons/fa";
 import apiClient from "../../../Services/apiClient";
 import { useNavigate, useParams } from "react-router";
+import Swal from "sweetalert2";
 
 const AddSchedule = () => {
   const { campaignId } = useParams();
@@ -24,8 +25,8 @@ const AddSchedule = () => {
       date: "",
       start_time: "",
       end_time: "",
-      max_capacity: ""
-    }
+      max_capacity: "",
+    },
   ]);
 
   useEffect(() => {
@@ -58,8 +59,8 @@ const AddSchedule = () => {
         date: "",
         start_time: "",
         end_time: "",
-        max_capacity: ""
-      }
+        max_capacity: "",
+      },
     ]);
   };
 
@@ -69,35 +70,164 @@ const AddSchedule = () => {
     }
   };
 
+  const showSuccessAlert = () => {
+    return Swal.fire({
+      title: "Success!",
+      text: "Schedules have been added successfully!",
+      icon: "success",
+      confirmButtonColor: "#14b8a6",
+      confirmButtonText: "Continue to Campaigns",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+    });
+  };
+
+  const showErrorAlert = (message) => {
+    return Swal.fire({
+      title: "Error!",
+      text: message,
+      icon: "error",
+      confirmButtonColor: "#ef4444",
+      confirmButtonText: "Try Again",
+    });
+  };
+
+  const showValidationError = (message) => {
+    Swal.fire({
+      title: "Validation Error",
+      text: message,
+      icon: "warning",
+      confirmButtonColor: "#f59e0b",
+      confirmButtonText: "OK",
+    });
+  };
+
+  const validateSchedules = () => {
+    for (let i = 0; i < schedules.length; i++) {
+      const schedule = schedules[i];
+
+      // Check for empty fields
+      if (
+        !schedule.date ||
+        !schedule.start_time ||
+        !schedule.end_time ||
+        !schedule.max_capacity
+      ) {
+        showValidationError(`Please fill in all fields for Schedule #${i + 1}`);
+        return false;
+      }
+
+      // Check if start time is before end time
+      if (schedule.start_time >= schedule.end_time) {
+        showValidationError(
+          `End time must be after start time for Schedule #${i + 1}`
+        );
+        return false;
+      }
+
+      // Check if capacity is valid
+      const capacity = parseInt(schedule.max_capacity);
+      if (isNaN(capacity) || capacity <= 0) {
+        showValidationError(
+          `Maximum capacity must be a number greater than 0 for Schedule #${
+            i + 1
+          }`
+        );
+        return false;
+      }
+
+      // Check if date is within campaign range
+      if (campaign) {
+        const scheduleDate = new Date(schedule.date);
+        const campaignStart = new Date(campaign.start_date);
+        const campaignEnd = new Date(campaign.end_date);
+
+        if (scheduleDate < campaignStart || scheduleDate > campaignEnd) {
+          showValidationError(
+            `Date for Schedule #${
+              i + 1
+            } must be between ${campaignStart.toLocaleDateString()} and ${campaignEnd.toLocaleDateString()}`
+          );
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    e.stopPropagation(); // Prevent event bubbling
+
     setSaving(true);
     setError(null);
 
+    if (!validateSchedules()) {
+      setSaving(false);
+      return;
+    }
+
     try {
-      for (const schedule of schedules) {
+      // Create all schedule promises
+      const schedulePromises = schedules.map((schedule) => {
         const payload = {
           campaign: campaignId,
           date: schedule.date,
           start_time: schedule.start_time,
           end_time: schedule.end_time,
-          available_slots: parseInt(schedule.max_capacity) || 0
+          available_slots: parseInt(schedule.max_capacity),
         };
 
-        await apiClient.post(`/campaigns/${campaignId}/schedule/`, payload);
-      }
+        return apiClient.post(`/campaigns/${campaignId}/schedule/`, payload);
+      });
 
-      navigate("/dashboard/campaigns?success=true");
+      await Promise.all(schedulePromises);
+      const result = await showSuccessAlert();
+
+      if (result.isConfirmed) {
+        navigate("/dashboard/campaigns?success=true");
+      }
     } catch (err) {
       console.error("Error creating schedule:", err);
-      setError(
-        err.response?.data?.message ||
-          "Failed to create schedule. Please try again."
-      );
+
+      let errorMessage = "Failed to create schedule. Please try again.";
+
+      if (err.response?.data) {
+        // Handle different types of API errors
+        if (typeof err.response.data === "string") {
+          errorMessage = err.response.data;
+        } else if (err.response.data.message) {
+          errorMessage = err.response.data.message;
+        } else if (err.response.data.detail) {
+          errorMessage = err.response.data.detail;
+        } else if (typeof err.response.data === "object") {
+          errorMessage = Object.values(err.response.data).flat().join(", ");
+        }
+      }
+
+      setError(errorMessage);
+      await showErrorAlert(errorMessage);
     } finally {
       setSaving(false);
     }
   };
+
+  // Add a beforeunload handler to prevent accidental navigation
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (saving) {
+        e.preventDefault();
+        e.returnValue =
+          "You have unsaved changes. Are you sure you want to leave?";
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [saving]);
 
   if (loading) {
     return (
@@ -118,8 +248,14 @@ const AddSchedule = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <button
-                onClick={() => navigate(-1)}
+                type="button"
+                onClick={() => {
+                  if (!saving) {
+                    navigate(-1);
+                  }
+                }}
                 className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                disabled={saving}
               >
                 <FaArrowLeft className="w-5 h-5 text-gray-600" />
               </button>
@@ -181,7 +317,7 @@ const AddSchedule = () => {
 
         {/* Schedule Form */}
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} noValidate>
             <div className="space-y-6">
               {schedules.map((schedule, index) => (
                 <div
@@ -193,6 +329,7 @@ const AddSchedule = () => {
                       type="button"
                       onClick={() => removeSchedule(index)}
                       className="absolute top-4 right-4 p-2 text-red-500 hover:text-red-700 transition-colors"
+                      disabled={saving}
                     >
                       <FaTrash className="w-4 h-4" />
                     </button>
@@ -219,6 +356,7 @@ const AddSchedule = () => {
                         required
                         min={campaign?.start_date}
                         max={campaign?.end_date}
+                        disabled={saving}
                       />
                     </div>
 
@@ -240,6 +378,7 @@ const AddSchedule = () => {
                         }
                         className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         required
+                        disabled={saving}
                       />
                     </div>
 
@@ -253,10 +392,15 @@ const AddSchedule = () => {
                         type="time"
                         value={schedule.end_time}
                         onChange={(e) =>
-                          handleScheduleChange(index, "end_time", e.target.value)
+                          handleScheduleChange(
+                            index,
+                            "end_time",
+                            e.target.value
+                          )
                         }
                         className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         required
+                        disabled={saving}
                       />
                     </div>
 
@@ -279,6 +423,7 @@ const AddSchedule = () => {
                         min="1"
                         className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         required
+                        disabled={saving}
                       />
                     </div>
                   </div>
@@ -289,7 +434,8 @@ const AddSchedule = () => {
               <button
                 type="button"
                 onClick={addSchedule}
-                className="w-full border-2 border-dashed border-gray-300 rounded-xl p-6 hover:border-teal-400 hover:bg-teal-50 transition-all duration-200 flex items-center justify-center gap-2 text-gray-600 hover:text-teal-700"
+                className="w-full border-2 border-dashed border-gray-300 rounded-xl p-6 hover:border-teal-400 hover:bg-teal-50 transition-all duration-200 flex items-center justify-center gap-2 text-gray-600 hover:text-teal-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={saving}
               >
                 <FaPlus className="w-5 h-5" />
                 Add Another Schedule
@@ -316,8 +462,13 @@ const AddSchedule = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => navigate("/dashboard/campaigns")}
-                  className="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
+                  onClick={() => {
+                    if (!saving) {
+                      navigate("/dashboard/campaigns");
+                    }
+                  }}
+                  className="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={saving}
                 >
                   Skip for Now
                 </button>

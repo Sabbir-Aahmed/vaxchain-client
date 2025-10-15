@@ -2,6 +2,7 @@ import { useState } from "react"
 import { FaPlus, FaSave, FaCalendarAlt, FaMapMarkerAlt, FaSyringe, FaUsers, FaDollarSign, FaSpinner } from "react-icons/fa"
 import apiClient from '../../../Services/apiClient'
 import { useNavigate } from "react-router"
+import Swal from "sweetalert2"
 
 const CreateCampaigns = () => {
   const navigate = useNavigate()
@@ -34,10 +35,116 @@ const CreateCampaigns = () => {
     setCampaignImage(e.target.files[0])
   }
 
+  const showSuccessAlert = (campaignName, campaignId) => {
+    return Swal.fire({
+      title: "Campaign Created!",
+      html: `
+        <div class="text-left">
+          <p class="mb-3"><strong>"${campaignName}"</strong> has been created successfully!</p>
+          <p class="text-sm text-gray-600">Would you like to add schedules for this campaign now?</p>
+        </div>
+      `,
+      icon: "success",
+      showCancelButton: true,
+      confirmButtonColor: "#14b8a6",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Yes, Add Schedules",
+      cancelButtonText: "View Campaigns",
+      reverseButtons: true,
+      customClass: {
+        confirmButton: 'swal2-confirm-success',
+        cancelButton: 'swal2-cancel-success'
+      }
+    })
+  }
+
+  const showErrorAlert = (message) => {
+    return Swal.fire({
+      title: "Creation Failed!",
+      text: message,
+      icon: "error",
+      confirmButtonColor: "#ef4444",
+      confirmButtonText: "Try Again",
+    })
+  }
+
+  const showValidationError = (message) => {
+    Swal.fire({
+      title: "Validation Error",
+      text: message,
+      icon: "warning",
+      confirmButtonColor: "#f59e0b",
+      confirmButtonText: "OK",
+    })
+  }
+
+  const validateForm = () => {
+    if (!formData.name.trim()) {
+      showValidationError("Campaign name is required");
+      return false;
+    }
+
+    if (!formData.description.trim()) {
+      showValidationError("Campaign description is required");
+      return false;
+    }
+
+    if (!formData.vaccine_type) {
+      showValidationError("Please select a vaccine type");
+      return false;
+    }
+
+    if (!formData.location.trim()) {
+      showValidationError("Location is required");
+      return false;
+    }
+
+    if (!formData.start_date) {
+      showValidationError("Start date is required");
+      return false;
+    }
+
+    if (!formData.end_date) {
+      showValidationError("End date is required");
+      return false;
+    }
+
+    // Check if end date is after start date
+    if (new Date(formData.end_date) <= new Date(formData.start_date)) {
+      showValidationError("End date must be after start date");
+      return false;
+    }
+
+    // Check premium campaign validation
+    if (formData.is_premium && (!formData.premium_price || parseFloat(formData.premium_price) <= 0)) {
+      showValidationError("Premium price must be greater than 0 for premium campaigns");
+      return false;
+    }
+
+    // Validate numbers
+    if (formData.dosage_interval_days && parseInt(formData.dosage_interval_days) < 0) {
+      showValidationError("Dosage interval days cannot be negative");
+      return false;
+    }
+
+    if (formData.max_participants && parseInt(formData.max_participants) < 1) {
+      showValidationError("Maximum participants must be at least 1");
+      return false;
+    }
+
+    return true;
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
+    e.stopPropagation()
     setLoading(true)
     setError(null)
+
+    if (!validateForm()) {
+      setLoading(false)
+      return
+    }
 
     try {
       const fd = new FormData()
@@ -59,11 +166,33 @@ const CreateCampaigns = () => {
       })
 
       if (response.status === 201) {
-        navigate(`/dashboard/campaigns/${response.data.id}/schedule`)
+        const result = await showSuccessAlert(response.data.name, response.data.id)
+        
+        if (result.isConfirmed) {
+          navigate(`/dashboard/campaigns/${response.data.id}/schedule`)
+        } else {
+          navigate('/dashboard/campaigns')
+        }
       }
     } catch (err) {
       console.error('Error creating campaign:', err)
-      setError(err.response?.data?.message || 'Failed to create campaign. Please try again.')
+      
+      let errorMessage = 'Failed to create campaign. Please try again.'
+      
+      if (err.response?.data) {
+        if (typeof err.response.data === 'string') {
+          errorMessage = err.response.data
+        } else if (err.response.data.message) {
+          errorMessage = err.response.data.message
+        } else if (err.response.data.detail) {
+          errorMessage = err.response.data.detail
+        } else if (typeof err.response.data === 'object') {
+          errorMessage = Object.values(err.response.data).flat().join(', ')
+        }
+      }
+      
+      setError(errorMessage)
+      await showErrorAlert(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -103,7 +232,7 @@ const CreateCampaigns = () => {
         )}
 
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" noValidate>
             {/* Campaign Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -117,6 +246,7 @@ const CreateCampaigns = () => {
                 placeholder="e.g., COVID-19 Booster Drive 2024"
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 required
+                disabled={loading}
               />
             </div>
 
@@ -133,6 +263,7 @@ const CreateCampaigns = () => {
                 placeholder="Describe the campaign objectives and target audience..."
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 required
+                disabled={loading}
               ></textarea>
             </div>
 
@@ -147,6 +278,7 @@ const CreateCampaigns = () => {
                 accept="image/*"
                 onChange={handleFileChange}
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                disabled={loading}
               />
             </div>
 
@@ -162,6 +294,7 @@ const CreateCampaigns = () => {
                 onChange={handleInputChange}
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 required
+                disabled={loading}
               >
                 <option value="">Select Vaccine Type</option>
                 {vaccineTypes.map(type => (
@@ -179,6 +312,7 @@ const CreateCampaigns = () => {
                   checked={formData.is_premium}
                   onChange={handleInputChange}
                   className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
+                  disabled={loading}
                 />
                 <span className="text-sm font-medium text-gray-700">
                   Premium Campaign
@@ -201,6 +335,7 @@ const CreateCampaigns = () => {
                     step="0.01"
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     required={formData.is_premium}
+                    disabled={loading}
                   />
                 </div>
               )}
@@ -220,6 +355,7 @@ const CreateCampaigns = () => {
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   required
+                  disabled={loading}
                 />
               </div>
               <div>
@@ -234,6 +370,7 @@ const CreateCampaigns = () => {
                   onChange={handleInputChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   required
+                  disabled={loading}
                 />
               </div>
             </div>
@@ -252,6 +389,7 @@ const CreateCampaigns = () => {
                 placeholder="e.g., 28 days for second dose"
                 min="0"
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                disabled={loading}
               />
             </div>
 
@@ -269,6 +407,7 @@ const CreateCampaigns = () => {
                 placeholder="e.g., 1000"
                 min="1"
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                disabled={loading}
               />
             </div>
 
@@ -286,6 +425,7 @@ const CreateCampaigns = () => {
                 placeholder="e.g., Central Community Health Center"
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 required
+                disabled={loading}
               />
             </div>
 
@@ -300,6 +440,7 @@ const CreateCampaigns = () => {
                 onChange={handleInputChange}
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 required
+                disabled={loading}
               >
                 {statusOptions.map(option => (
                   <option key={option.value} value={option.value}>
@@ -331,7 +472,8 @@ const CreateCampaigns = () => {
               <button
                 type="button"
                 onClick={() => navigate('/dashboard')}
-                className="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors"
+                className="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-colors disabled:opacity-50"
+                disabled={loading}
               >
                 Cancel
               </button>
