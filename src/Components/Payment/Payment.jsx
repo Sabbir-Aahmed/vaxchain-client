@@ -1,8 +1,8 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { FaArrowLeft, FaCreditCard, FaSpinner } from "react-icons/fa";
 import apiClient from "../../Services/apiClient";
+import Swal from "sweetalert2";
 
 const Payment = () => {
   const navigate = useNavigate();
@@ -24,6 +24,16 @@ const Payment = () => {
     }
   }, [navigate]);
 
+  const showPaymentError = (errorMessage) => {
+    Swal.fire({
+      title: "Payment Error",
+      text: errorMessage,
+      icon: "error",
+      confirmButtonColor: "#ef4444",
+      confirmButtonText: "OK"
+    });
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCustomer((prev) => ({ ...prev, [name]: value }));
@@ -44,7 +54,8 @@ const Payment = () => {
       // Redirect to SSLCommerz payment page
       window.location.href = res.data.payment_url;
     } catch (err) {
-      alert(err.response?.data?.error || "Could not initiate payment.");
+      const errorMessage = err.response?.data?.error || "Could not initiate payment. Please try again.";
+      showPaymentError(errorMessage);
     } finally {
       setIsProcessing(false);
     }

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 import {
@@ -12,6 +11,7 @@ import CampaignDetailsInfo from "./CampaignDetailsInfo";
 import CampaignSchedule from "./CampaignsScedule";
 import apiClient from "../../Services/apiClient";
 import CampaignReview from "./CampaignReviews";
+import Swal from "sweetalert2";
 
 const CampaignDetails = () => {
   const { id } = useParams();
@@ -39,9 +39,43 @@ const CampaignDetails = () => {
     if (id) fetchCampaignDetails();
   }, [id]);
 
+  const showBookingSuccess = () => {
+    Swal.fire({
+      title: "Booking Confirmed!",
+      text: "Your vaccination appointment has been booked successfully.",
+      icon: "success",
+      confirmButtonColor: "#14b8a6",
+      confirmButtonText: "View My Bookings"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate("/dashboard/user");
+      }
+    });
+  };
+
+  const showBookingError = (errorMessage) => {
+    Swal.fire({
+      title: "Booking Failed!",
+      text: errorMessage,
+      icon: "error",
+      confirmButtonColor: "#ef4444",
+      confirmButtonText: "Try Again"
+    });
+  };
+
+  const showScheduleSelectionError = () => {
+    Swal.fire({
+      title: "Select Schedule",
+      text: "Please select a schedule first to book your appointment.",
+      icon: "warning",
+      confirmButtonColor: "#f59e0b",
+      confirmButtonText: "OK"
+    });
+  };
+
   const handleBooking = async () => {
     if (!selectedSchedule) {
-      alert("Please select a schedule first");
+      showScheduleSelectionError();
       return;
     }
 
@@ -65,12 +99,12 @@ const CampaignDetails = () => {
         );
         navigate("/dashboard/payment");
       } else {
-        alert("Booking successful!");
-        navigate("/dashboard/user");
+        showBookingSuccess();
       }
     } catch (err) {
       console.error(err.response?.data || err);
-      alert( "Booking failed.");
+      const errorMessage = err.response?.data?.message || "Failed to book appointment. Please try again.";
+      showBookingError(errorMessage);
     } finally {
       setIsBooking(false);
     }

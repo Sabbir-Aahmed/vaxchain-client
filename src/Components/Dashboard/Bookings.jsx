@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { FaCalendarCheck, FaUser, FaClock, FaSpinner, FaSyringe, FaEllipsisH, FaCalendarAlt, FaInfoCircle } from "react-icons/fa"
 import apiClient from '../../Services/apiClient'
 import { Link } from 'react-router'
+import Swal from 'sweetalert2'
 
 const Bookings = () => {
   const [bookings, setBookings] = useState([])
@@ -14,6 +15,7 @@ const Bookings = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [expandedBooking, setExpandedBooking] = useState(null)
+  const [cancellingId, setCancellingId] = useState(null)
 
   useEffect(() => {
     fetchBookings()
@@ -54,20 +56,102 @@ const Bookings = () => {
     }
   }
 
-  const handleCancelBooking = async (id) => {
-    if (!window.confirm('Are you sure you want to cancel this booking?')) {
-      return
-    }
+  const showCancelConfirmation = (patientName, campaignName) => {
+    return Swal.fire({
+      title: 'Cancel Booking?',
+      html: `
+        <div class="text-left">
+          <p class="mb-3">Are you sure you want to cancel the booking for <strong>${patientName}</strong>?</p>
+          <p class="text-sm text-gray-600 mb-2">Campaign: <strong>${campaignName}</strong></p>
+          <p class="text-sm text-red-600">This action cannot be undone!</p>
+        </div>
+      `,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, Cancel Booking',
+      cancelButtonText: 'Keep Booking',
+      reverseButtons: true,
+      focusCancel: true,
+      customClass: {
+        popup: 'rounded-lg',
+        confirmButton: 'rounded-lg px-4 py-2',
+        cancelButton: 'rounded-lg px-4 py-2'
+      }
+    })
+  }
+
+  const showCancelSuccess = (patientName) => {
+    Swal.fire({
+      title: 'Booking Cancelled!',
+      text: `Booking for ${patientName} has been cancelled successfully.`,
+      icon: 'success',
+      confirmButtonColor: '#14b8a6',
+      confirmButtonText: 'OK',
+      timer: 3000,
+      timerProgressBar: true,
+      customClass: {
+        popup: 'rounded-lg',
+        confirmButton: 'rounded-lg px-4 py-2'
+      }
+    })
+  }
+
+  const showCancelError = (patientName, errorMessage) => {
+    Swal.fire({
+      title: 'Cancellation Failed!',
+      html: `
+        <div class="text-left">
+          <p class="mb-2">Failed to cancel booking for <strong>${patientName}</strong>.</p>
+          <p class="text-sm text-gray-600">${errorMessage}</p>
+        </div>
+      `,
+      icon: 'error',
+      confirmButtonColor: '#ef4444',
+      confirmButtonText: 'Try Again',
+      customClass: {
+        popup: 'rounded-lg',
+        confirmButton: 'rounded-lg px-4 py-2'
+      }
+    })
+  }
+
+  const handleCancelBooking = async (booking) => {
+    const result = await showCancelConfirmation(booking.patient_name, booking.campaign_name)
     
+    if (!result.isConfirmed) return
+
     try {
-      await apiClient.delete(`/bookings/${id}/delete/`)
+      setCancellingId(booking.id)
+      await apiClient.delete(`/bookings/${booking.id}/delete/`)
+      
       // Remove the cancelled booking from the list
-      setBookings(bookings.filter(booking => booking.id !== id))
+      setBookings(bookings.filter(b => b.id !== booking.id))
+      
       // Refresh stats
       fetchStats()
+      
+      // Show success message
+      showCancelSuccess(booking.patient_name)
+      
     } catch (err) {
       console.error('Error cancelling booking:', err)
-      alert('Failed to cancel booking. Please try again.')
+      
+      let errorMessage = 'Please try again.'
+      if (err.response?.data) {
+        if (typeof err.response.data === 'string') {
+          errorMessage = err.response.data
+        } else if (err.response.data.message) {
+          errorMessage = err.response.data.message
+        } else if (err.response.data.detail) {
+          errorMessage = err.response.data.detail
+        }
+      }
+      
+      showCancelError(booking.patient_name, errorMessage)
+    } finally {
+      setCancellingId(null)
     }
   }
 
@@ -283,9 +367,18 @@ const Bookings = () => {
                     </td>
                     <td className="px-4 py-4 sm:px-6 whitespace-nowrap text-sm font-medium">
                       <button 
-                        onClick={() => handleCancelBooking(booking.id)}
-                        className="text-red-600 hover:text-red-900 text-xs sm:text-sm">
-                          Cancel
+                        onClick={() => handleCancelBooking(booking)}
+                        disabled={cancellingId === booking.id}
+                        className="text-red-600 hover:text-red-900 text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        {cancellingId === booking.id ? (
+                          <div className="flex items-center gap-1">
+                            <FaSpinner className="w-3 h-3 animate-spin" />
+                            Cancelling...
+                          </div>
+                        ) : (
+                          'Cancel'
+                        )}
                       </button>
                     </td>
                   </tr>
@@ -383,9 +476,18 @@ const Bookings = () => {
                         </Link>
                         
                         <button 
-                          onClick={() => handleCancelBooking(booking.id)}
-                          className="flex-1 bg-red-500 text-white py-2 px-3 rounded-lg text-xs font-medium hover:bg-red-600 transition-colors">
-                          Cancel
+                          onClick={() => handleCancelBooking(booking)}
+                          disabled={cancellingId === booking.id}
+                          className="flex-1 bg-red-500 text-white py-2 px-3 rounded-lg text-xs font-medium hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {cancellingId === booking.id ? (
+                            <div className="flex items-center justify-center gap-1">
+                              <FaSpinner className="w-3 h-3 animate-spin" />
+                              Cancelling...
+                            </div>
+                          ) : (
+                            'Cancel'
+                          )}
                         </button>
                       </div>
                     </div>
