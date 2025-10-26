@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
-import { FaSearch, FaFilter, FaShieldAlt, FaSpinner, FaArrowLeft, FaArrowRight } from "react-icons/fa"
+import { FaSearch, FaFilter, FaShieldAlt, FaSpinner } from "react-icons/fa"
 import CampaignList from "./CampaignList"
+import Pagination from "./Pagination"
 import apiClient from "../../Services/apiClient"
 
 const Campaigns = () => {
@@ -12,6 +13,9 @@ const Campaigns = () => {
   const [error, setError] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [totalCount, setTotalCount] = useState(0)
+
+  const pageSize = 10
+  const totalPages = Math.ceil(totalCount / pageSize)
 
   useEffect(() => {
     setLoading(true)
@@ -37,14 +41,16 @@ const Campaigns = () => {
       .finally(() => setLoading(false))
   }, [searchTerm, selectedStatus, currentPage])
 
-
-  const pageSize = 10
-  const totalPages = Math.ceil(totalCount / pageSize)
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage)
+    // Optional: Smooth scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-cyan-50 via-teal-50 to-blue-50">
       {/* VaxChain Header */}
-      <div className="bg-gradient-to-r from-teal-500 to-cyan-600  text-white py-16">
+      <div className="bg-gradient-to-r from-teal-500 to-cyan-600 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-3 mb-4">
             <FaShieldAlt className="w-8 h-8 text-cyan-200" />
@@ -89,7 +95,7 @@ const Campaigns = () => {
             </div>
           </div>
 
-          {/* Results Count */}
+          {/* Results Count - This stays here */}
           <div className="mt-4 text-sm text-slate-600">
             Showing {filteredCampaigns.length} of {totalCount} campaigns
           </div>
@@ -108,30 +114,8 @@ const Campaigns = () => {
             {/* Campaign Grid */}
             <CampaignList campaigns={filteredCampaigns} loading={isLoading} error={error} />
 
-            {/* Pagination Controls */}
-            {totalCount > 0 && (
-              <div className="flex justify-center items-center gap-4 mt-8">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  disabled={currentPage === 1}
-                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white rounded-xl disabled:bg-gray-300 disabled:cursor-not-allowed  transition-all duration-200"
-                >
-                  <FaArrowLeft className="w-4 h-4" />
-                  Previous
-                </button>
-                <span className="text-slate-600">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={currentPage === totalPages || totalPages === 0}
-                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white rounded-xl disabled:bg-gray-300 disabled:cursor-not-allowed  transition-all duration-200"
-                >
-                  Next
-                  <FaArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            )}
+            {/* Add the missing props here */}
+            
 
             {/* No Results State */}
             {!isLoading && filteredCampaigns.length === 0 && (
@@ -142,8 +126,8 @@ const Campaigns = () => {
                   <button
                     onClick={() => {
                       setSearchTerm("")
-                      setSelectedStatus("all")
-                      setCurrentPage(1) // Reset to first page on clear
+                      setSelectedStatus("ALL")
+                      setCurrentPage(1)
                     }}
                     className="text-teal-600 hover:text-teal-700 font-medium text-sm"
                   >
@@ -154,6 +138,16 @@ const Campaigns = () => {
             )}
           </>
         )}
+
+        <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalCount={totalCount}
+              pageSize={pageSize}
+              onPageChange={handlePageChange}
+              className="mt-8"
+              showPageNumbers={true}
+          />
       </div>
     </div>
   )
