@@ -204,7 +204,7 @@ const CampaignDetails = () => {
               </div>
             )}
             {hasBooked && (
-              <div className="bg-gradient-to-r from-teal-500 to-cyan-400 text-white px-4 py-2 rounded-full flex items-center gap-2 text-sm font-semibold">
+              <div className="bg-gradient-to-r from-teal-500 to-cyan-400 text-green-900 px-4 py-2 rounded-full flex items-center gap-2 text-sm font-semibold">
                 <FaCheckCircle className="w-4 h-4" />
                 BOOKED
               </div>
