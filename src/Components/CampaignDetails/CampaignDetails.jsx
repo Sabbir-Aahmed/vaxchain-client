@@ -6,6 +6,7 @@ import {
   FaCalendarCheck,
   FaCrown,
   FaCreditCard,
+  FaCheckCircle,
 } from "react-icons/fa";
 import CampaignDetailsInfo from "./CampaignDetailsInfo";
 import CampaignSchedule from "./CampaignsScedule";
@@ -21,18 +22,40 @@ const CampaignDetails = () => {
   const [error, setError] = useState("");
   const [isBooking, setIsBooking] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
+  const [hasBooked, setHasBooked] = useState(false);
+  const [checkingBooking, setCheckingBooking] = useState(true);
 
   useEffect(() => {
     const fetchCampaignDetails = async () => {
       try {
         setIsLoading(true);
+        setCheckingBooking(true);
+
         const response = await apiClient.get(`/campaigns/${id}/`);
         setCampaign(response.data);
+
+        try {
+          const bookingResponse = await apiClient.get(
+            `/campaigns/${id}/user-booking/`
+          );
+
+          if (bookingResponse.data.has_booked) {
+            setHasBooked(true);
+          } else {
+            setHasBooked(false);
+          }
+        } catch (bookingErr) {
+          setHasBooked(false);
+          if (bookingErr.response?.status !== 404) {
+            console.error("Error checking user booking:", bookingErr);
+          }
+        }
       } catch (err) {
         console.error("Error fetching campaign details:", err);
         setError("Failed to load campaign details");
       } finally {
         setIsLoading(false);
+        setCheckingBooking(false);
       }
     };
 
@@ -45,7 +68,7 @@ const CampaignDetails = () => {
       text: "Your vaccination appointment has been booked successfully.",
       icon: "success",
       confirmButtonColor: "#14b8a6",
-      confirmButtonText: "View My Bookings"
+      confirmButtonText: "View My Bookings",
     }).then((result) => {
       if (result.isConfirmed) {
         navigate("/dashboard/user");
@@ -59,7 +82,7 @@ const CampaignDetails = () => {
       text: errorMessage,
       icon: "error",
       confirmButtonColor: "#ef4444",
-      confirmButtonText: "Try Again"
+      confirmButtonText: "Try Again",
     });
   };
 
@@ -69,11 +92,30 @@ const CampaignDetails = () => {
       text: "Please select a schedule first to book your appointment.",
       icon: "warning",
       confirmButtonColor: "#f59e0b",
-      confirmButtonText: "OK"
+      confirmButtonText: "OK",
+    });
+  };
+
+  const showAlreadyBookedMessage = () => {
+    Swal.fire({
+      title: "Already Booked!",
+      text: "You have already booked an appointment for this campaign.",
+      icon: "info",
+      confirmButtonColor: "#14b8a6",
+      confirmButtonText: "View My Booking",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate("/dashboard/user");
+      }
     });
   };
 
   const handleBooking = async () => {
+    if (hasBooked) {
+      showAlreadyBookedMessage();
+      return;
+    }
+
     if (!selectedSchedule) {
       showScheduleSelectionError();
       return;
@@ -99,12 +141,25 @@ const CampaignDetails = () => {
         );
         navigate("/dashboard/payment");
       } else {
+        setHasBooked(true);
         showBookingSuccess();
       }
     } catch (err) {
       console.error(err.response?.data || err);
-      const errorMessage = err.response?.data?.message || "Failed to book appointment. Please try again.";
-      showBookingError(errorMessage);
+      const errorMessage =
+        err.response?.data?.message ||
+        err.response?.data?.detail ||
+        "Failed to book appointment. Please try again.";
+
+      if (
+        errorMessage.toLowerCase().includes("already booked") ||
+        errorMessage.toLowerCase().includes("already exists")
+      ) {
+        setHasBooked(true);
+        showAlreadyBookedMessage();
+      } else {
+        showBookingError(errorMessage);
+      }
     } finally {
       setIsBooking(false);
     }
@@ -146,6 +201,12 @@ const CampaignDetails = () => {
               <div className="bg-gradient-to-r from-amber-400 to-yellow-500 text-amber-900 px-4 py-2 rounded-full flex items-center gap-2 text-sm font-semibold">
                 <FaCrown className="w-4 h-4" />
                 PREMIUM
+              </div>
+            )}
+            {hasBooked && (
+              <div className="bg-gradient-to-r from-teal-500 to-cyan-400 text-white px-4 py-2 rounded-full flex items-center gap-2 text-sm font-semibold">
+                <FaCheckCircle className="w-4 h-4" />
+                BOOKED
               </div>
             )}
           </div>
@@ -213,44 +274,67 @@ const CampaignDetails = () => {
                 schedules={campaign.schedules}
                 selectedSchedule={selectedSchedule}
                 onScheduleSelect={setSelectedSchedule}
+                disabled={hasBooked}
               />
 
-              <div className="bg-white rounded-2xl shadow-lg p-6">
-                <button
-                  onClick={handleBooking}
-                  disabled={isBooking || !selectedSchedule}
-                  className={`w-full py-4 px-6 rounded-xl font-semibold text-lg transition-all duration-200 flex items-center justify-center gap-2 ${
-                    campaign.is_premium
-                      ? "bg-gradient-to-r from-amber-500 to-yellow-600 text-white hover:from-amber-600 hover:to-yellow-700"
-                      : "bg-gradient-to-r from-teal-500 to-cyan-600 text-white hover:from-teal-600 hover:to-cyan-700"
-                  } disabled:opacity-50 disabled:cursor-not-allowed`}
-                >
-                  {isBooking ? (
-                    <>
-                      <FaSpinner className="animate-spin w-5 h-5" />
-                      Processing...
-                    </>
-                  ) : campaign.is_premium ? (
-                    <>
-                      <FaCreditCard className="w-5 h-5" />
-                      Proceed to Payment
-                    </>
-                  ) : (
-                    <>
-                      <FaCalendarCheck className="w-5 h-5" />
-                      Book Appointment
-                    </>
+              {/* Booking Section - Only show if user hasn't booked */}
+              {!hasBooked ? (
+                <div className="bg-white rounded-2xl shadow-lg p-6">
+                  <button
+                    onClick={handleBooking}
+                    disabled={isBooking || !selectedSchedule || checkingBooking}
+                    className={`w-full py-4 px-6 rounded-xl font-semibold text-lg transition-all duration-200 flex items-center justify-center gap-2 ${
+                      campaign.is_premium
+                        ? "bg-gradient-to-r from-amber-500 to-yellow-600 text-white hover:from-amber-600 hover:to-yellow-700"
+                        : "bg-gradient-to-r from-teal-500 to-cyan-600 text-white hover:from-teal-600 hover:to-cyan-700"
+                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                  >
+                    {isBooking ? (
+                      <>
+                        <FaSpinner className="animate-spin w-5 h-5" />
+                        Processing...
+                      </>
+                    ) : campaign.is_premium ? (
+                      <>
+                        <FaCreditCard className="w-5 h-5" />
+                        Proceed to Payment
+                      </>
+                    ) : (
+                      <>
+                        <FaCalendarCheck className="w-5 h-5" />
+                        Book Appointment
+                      </>
+                    )}
+                  </button>
+                  {!selectedSchedule && (
+                    <p className="text-slate-500 text-sm text-center mt-2">
+                      Please select a schedule to{" "}
+                      {campaign.is_premium
+                        ? "proceed with payment"
+                        : "book your appointment"}
+                    </p>
                   )}
-                </button>
-                {!selectedSchedule && (
-                  <p className="text-slate-500 text-sm text-center mt-2">
-                    Please select a schedule to{" "}
-                    {campaign.is_premium
-                      ? "proceed with payment"
-                      : "book your appointment"}
-                  </p>
-                )}
-              </div>
+                </div>
+              ) : (
+                // Already Booked Message
+                <div className="bg-white rounded-2xl shadow-lg p-6">
+                  <div className="text-center">
+                    <FaCheckCircle className="text-teal-500  w-12 h-12 mx-auto mb-4" />
+                    <h3 className="text-xl font-semibold text-teal-500  mb-2">
+                      Appointment Confirmed
+                    </h3>
+                    <p className="text-slate-600 mb-4">
+                      You have already booked an appointment for this campaign.
+                    </p>
+                    <button
+                      onClick={() => navigate("/dashboard/user")}
+                      className="w-full py-3 px-6 bg-gradient-to-r from-teal-500 to-cyan-600 text-white rounded-xl hover:from-teal-600 hover:to-cyan-700 transition-all duration-200 font-semibold"
+                    >
+                      View My Bookings
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

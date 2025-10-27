@@ -109,7 +109,7 @@ const CampaignDetailsInfo = ({ campaign }) => {
           <div>
             <h3 className="font-semibold text-slate-700 mb-2">Status</h3>
             <div className="flex items-center gap-2">
-              <FaCheckCircle className="text-green-500 w-4 h-4" />
+              <FaCheckCircle className="text-teal-500 w-4 h-4" />
               <span className="capitalize text-slate-600">{campaign.status}</span>
             </div>
           </div>
